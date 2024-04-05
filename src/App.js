@@ -7,6 +7,8 @@ import StudentSend from './components/StudentSendToEmployer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ViewBlocks from './components/ViewBlocks';
 import EmployerPage from './components/EmployerReceiving';
+import EncryptAndDecrypt from './components/EncryptDecrypt';
+import ContractInformation from './components/contractInformation'
 
 
 
@@ -20,6 +22,8 @@ function App() {
           <Route path="/student/send" element = {<StudentSend />} />
           <Route path='viewblocks' element = {<ViewBlocks/>} />
           <Route path='/employer/dashboard' element = {<EmployerPage />} />
+          <Route path='/crypto' element = {<EncryptAndDecrypt />} />
+          <Route path='/contract/information' element = {<ContractInformation/>}/>
       </Routes>
     </BrowserRouter>
   );

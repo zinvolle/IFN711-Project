@@ -27,17 +27,18 @@ async function getAllStudentDataForEmployer(employerPublicKey) {
     } catch (error) {
         console.log(error)
     }
-    
 }
+
 
 //calls the 'readEntries' function on the smart contract - obtains all of the 'Send To' data for each smart contract.
 async function readEntries(contractAddress) {
     try {
         const contract = new web3.eth.Contract(ABI, contractAddress);
-        const value = await contract.methods.getEntries().call();
-        const parsedData = value.map(entry => JSON.parse(entry));
+        const entries = await contract.methods.getEntries().call();
+        const parsedData = entries.map(obj => JSON.parse(obj))
         console.log(parsedData);
         return parsedData
+        
     } catch (error) {
         console.log(error);
     }
@@ -69,7 +70,9 @@ async function getContractAddresses() {
 function Student(props){
     return (
         <div>
-            <h4>encrypted student data: {props.studentData.encryptedStudentData}</h4>
+            <h4>Student</h4>
+            <p>encrypted data: {props.studentData.encryptedData}</p>
+            <p>signature: {props.studentData.signature}</p>
         </div>
     )
 }

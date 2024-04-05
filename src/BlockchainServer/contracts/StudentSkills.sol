@@ -4,10 +4,11 @@ pragma solidity ^0.8.13;
 contract StudentSkills{
     string public publicKey;
     string public hashedData;
-    uint256 public numberOfEntries;
+    uint256 public numberOfEntries; 
 
     struct Entry {
-        string encryptedData;
+        string encryptedData; //Might have to make an extra Entry for signatures
+        string signature;
         string employerPublicKey;
     }
 
@@ -19,8 +20,8 @@ contract StudentSkills{
         numberOfEntries = 0;
     }
 
-    function addEntry(string memory newEncryptedData, string memory newEmployerPublicKey) public {
-        entries[numberOfEntries] = Entry(newEncryptedData, newEmployerPublicKey);
+    function addEntry(string memory newEncryptedData, string memory newSignature, string memory newEmployerPublicKey) public {
+        entries[numberOfEntries] = Entry(newEncryptedData, newSignature, newEmployerPublicKey);
         numberOfEntries++;
     }
 
@@ -39,7 +40,11 @@ contract StudentSkills{
     function getEntries() public view returns (string[] memory) {
         string[] memory dataList = new string[](numberOfEntries);
         for (uint256 i = 0; i < numberOfEntries; i++) {
-            dataList[i] = string(abi.encodePacked('{"encryptedStudentData":"', entries[i].encryptedData, '", "employerPublicKey":"', entries[i].employerPublicKey, '"}'));
+            dataList[i] = string(abi.encodePacked(
+            '{"encryptedData":"', entries[i].encryptedData,
+            '", "signature":"', entries[i].signature,
+            '", "employerPublicKey":"', entries[i].employerPublicKey,
+            '"}'));
         }
         return dataList;
     }

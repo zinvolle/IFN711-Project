@@ -1,6 +1,7 @@
 import React from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from 'react';
+import { Encrypt, Decrypt, Sign, Verify } from '../CryptoTools/CryptoTools';
 
 const { Web3 } = require("web3");
 
@@ -10,16 +11,13 @@ const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 const ABI = compiledContract.abi;
 
 //For Darren and Daniel to input the encryption function
-function EncryptData(data, publicKey) {
-        
-}
 
-async function addEntryToBlockchain(contractAddress, encryptedStudentData, employerPublicKey){
+async function addEntryToBlockchain(contractAddress, encryptedStudentData, studentSignature, employerPublicKey){
     try {
         const accounts = await web3.eth.getAccounts();
         const mainAccount = accounts[0];
         const contract = new web3.eth.Contract(ABI, contractAddress)
-        await contract.methods.addEntry(encryptedStudentData, employerPublicKey)
+        await contract.methods.addEntry(encryptedStudentData, studentSignature, employerPublicKey)
         .send({ from: mainAccount, gas: 4700000 }) //from a default account
         .on('transactionHash', function(hash){
             console.log('Transaction hash:', hash);
@@ -36,7 +34,7 @@ async function addEntryToBlockchain(contractAddress, encryptedStudentData, emplo
 
 function StudentSend(){
     const [employerPublicKey, setEmployerPublicKey] = useState('')
-    const [studentPrivateKey, setStudentPrivateKey] = useState('')
+    const [studentPrivateSignatureKey, setStudentPrivateSignature] = useState('')
     const [studentSkillsData, setStudentSkillsData] = useState('')
     const [contractAddress, setContractAddress] = useState('')
     const [error, setError] = useState('')
@@ -44,7 +42,9 @@ function StudentSend(){
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-          await addEntryToBlockchain(contractAddress, studentSkillsData, employerPublicKey);  //studentSkillsData will need to be encrypted FIRST before being added to blockchain
+          const encryptedData = await Encrypt(studentSkillsData, employerPublicKey)
+          const signature = await Sign(studentSkillsData, studentPrivateSignatureKey)
+          await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey);  //studentSkillsData will need to be encrypted FIRST before being added to blockchain
         } catch (error) {
           setError(error)
         }
@@ -61,8 +61,8 @@ function StudentSend(){
                 <label className="h5">Your Contract Address
                     <input type="text" className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />
                 </label>
-                <label className="h5 mt-1">Your Private Key
-                    <input type="password" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateKey(e.target.value)} required />
+                <label className="h5 mt-1">Your Private Signature Key
+                    <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
                 </label>
                 <label className="h5 mt-1">Your skills data
                     <textarea type="text" style={{ width: '100%', minHeight: '200px' }} className="form-control" onChange={(e)=>setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />

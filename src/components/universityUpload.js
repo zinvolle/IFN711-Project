@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
+import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
 
 const { Web3 } = require("web3");
 
@@ -12,13 +13,14 @@ const contract = new web3.eth.Contract(ABI);
 
 
 
+
 //deployment of Contract function
-async function deployContract(_studentPublicKey, _studentSkills) {
+async function deployContract(_studentPublicKey, _hashedStudentSkills) {
   try {
       const accounts = await web3.eth.getAccounts();
       const mainAccount = accounts[0];
       console.log("Default Account:", mainAccount);
-      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_studentSkills] }).send({ from: mainAccount, gas: 4700000 });
+      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_hashedStudentSkills] }).send({ from: mainAccount, gas: 4700000 });
       console.log("Contract deployed at address:", deployedContract.options.address);
       return deployedContract; 
   } catch (error) {
@@ -31,10 +33,6 @@ async function deployContract(_studentPublicKey, _studentSkills) {
   }
 }
 
-//To be done by Darren and Daniel
-function uploadToIPFS(){
-  
-}
 
 function UniversityUpload() {
   const [studentPublicKey, setStudentPublicKey] = useState('')
@@ -45,8 +43,8 @@ function UniversityUpload() {
     event.preventDefault();
     try {
       
-      
-      await deployContract(studentPublicKey, studentSkills);
+      const hashedStudentSkills = await HashDataSHA256(studentSkills)
+      await deployContract(studentPublicKey, hashedStudentSkills);
       window.location.reload();
     } catch (error) {
       setError(error)

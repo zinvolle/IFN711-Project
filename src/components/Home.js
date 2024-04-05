@@ -19,6 +19,10 @@ function Home() {
                 <Link to="/employer/dashboard">
                     <button>Employer View</button>
                 </Link>
+                <Link to="/contract/information">
+                    <button>Contract Information</button>
+                </Link>
+            
         
         </div>
     </div>
