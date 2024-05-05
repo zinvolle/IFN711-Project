@@ -125,8 +125,6 @@ export async function Verify(message, signatureBase64, publicKeyBase64) {
     }
 }
 
-// test comment, to be deleted
-
 export async function HashDataSHA256(data) {
     // Convert data to ArrayBuffer
     const encoder = new TextEncoder();
