@@ -13,6 +13,9 @@ function Home() {
                 <Link to="/student/send">
                     <button>Send To Employer</button>
                 </Link>
+                <Link to="/student/receive">
+                    <button>Student View</button>
+                </Link>
                 <Link to="/university/deploy">
                     <button>Deploy a contract</button>
                 </Link>

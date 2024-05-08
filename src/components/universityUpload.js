@@ -53,15 +53,15 @@ function UniversityUpload() {
   
   return (
     <div className="container d-flex justify-content-center">
-      <div className="row justify-content-center text-center col-md-3" style={{ marginTop: '300px' }}> 
+      <div className="row justify-content-center text-center col-md-4" style={{ marginTop: '200px' }}> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
-            <label className="h5">Input Public Key
-               <input type="text" id="studentpublickey" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
-            </label>
-            <label className="h5 mt-1">Input skills
+            <label className="h5">Input Public Key </label>
+            <input type="text" id="studentpublickey" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
+
+            <label className="h5 mt-1">Input skills </label>
+            
               <textarea type="text" id="studentskills" style={{ width: '100%', minHeight: '200px' }} className="form-control" placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
-            </label>
             <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Deploy</button>
            
           </form>
