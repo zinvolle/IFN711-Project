@@ -1,6 +1,7 @@
 import React from "react";
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from "react";
+import CompareToHash from "../CryptoTools/CryptoTools.js";
 
 const { Web3 } = require("web3");
 
@@ -14,6 +15,9 @@ function ContractInformation() {
     const [publicKey, setPublicKey] = useState('')
     const [hashedStudentSkills, setHashedStudentSkills] = useState('')
     const [entries, setEntries] = useState('')
+    const [inputData, setInputData] = useState('')
+    const [authentic, setAuthentic] = useState(false)
+
 
     const handleClick = async ()=>{
         const contract = new web3.eth.Contract(ABI, contractAddress);
@@ -45,6 +49,11 @@ function ContractInformation() {
             console.log(error)
         });
 
+        
+        // testing of hashing function, to be deleted later...
+        setInputData("Maths\nScience");
+        CompareToHash(inputData, hashedStudentSkills, setAuthentic);
+
     }
     
 
@@ -62,6 +71,9 @@ function ContractInformation() {
             <p>{hashedStudentSkills}</p>
             <h3>Entries</h3>
             <p>{entries}</p>
+            {/*testing hashing below*/}
+            <h3>Hashing</h3>
+            <p>Hash authenticity: {authentic}</p>
         </div>
     )
 }
