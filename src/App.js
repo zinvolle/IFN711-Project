@@ -11,6 +11,8 @@ import EmployerPage from './components/EmployerReceiving';
 import EncryptAndDecrypt from './components/EncryptDecrypt';
 import ContractInformation from './components/contractInformation'
 import IPFS from './components/ipfs'
+import {IPFSUploader,IPFSDownloader} from './components/ipfs';
+//import IPFSDownloader from './components/ipfs';
 
 
 
@@ -27,7 +29,7 @@ function App() {
           <Route path='/employer/dashboard' element = {<EmployerPage />} />
           <Route path='/crypto' element = {<EncryptAndDecrypt />} />
           <Route path='/contract/information' element = {<ContractInformation/>}/>
-          <Route path='/ipfsuploader' element = {<IPFS/>}/>
+          <Route path='/ipfsuploader' element = {<IPFSDownloader/>}/>
       </Routes>
     </BrowserRouter>
   );

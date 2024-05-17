@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { create } from 'ipfs-http-client';
 import { Buffer } from 'buffer';
+import all from 'it-all';
+import concat from 'uint8-concat';
 
 const ipfs = create({ host: 'localhost', port: 5001, protocol: 'http' });
+//const ipfs = create();
 
 const IPFSUploader = () => {
   const [data, setData] = useState('');
@@ -84,4 +87,39 @@ const IPFSUploader = () => {
   );
 };
 
-export default IPFSUploader;
+const IPFSDownloader = () => {
+  const [cid, setCid] = useState('');
+  const [fileHash, setFileHash] = useState('');
+  const [fileOutput, setfileOutput] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const handleCidChange = (e) => {
+    setCid(e.target.value);
+  };
+  const retrieveFile = async () => {
+    try {
+      const file = concat(await all(ipfs.cat(cid)))
+      const data = new TextDecoder().decode(file).toString();
+      console.log('Retrieved file content:', data);
+      setfileOutput(data)
+    } catch (error) {
+      console.error('Error retrieving file:', error);
+            setErrorMessage(`Error retreiving data: ${error.message}`);
+    }
+  }
+  return (
+    <div style ={{display:'flex',flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+      <textarea value={cid} onChange={handleCidChange} />
+      <button onClick={retrieveFile}>Output IPFS File</button>
+      {fileOutput && (
+        <div>
+          <p>File Contents: {fileOutput}</p>
+        </div>
+      )}
+      {errorMessage && <p>Error: {errorMessage}</p>}
+    </div>
+  );
+};
+
+
+export {IPFSUploader,IPFSDownloader}
+export default IPFSUploader

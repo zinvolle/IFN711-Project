@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
-
+import IPFSUploader from './ipfs';
 const { Web3 } = require("web3");
 
 
@@ -65,6 +65,7 @@ function UniversityUpload() {
             <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Deploy</button>
            
           </form>
+
           <h4>Error: {error}</h4>
       </div>
     </div>
