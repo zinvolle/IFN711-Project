@@ -54,7 +54,7 @@ function ContractInformation() {
         // ( Currently works but only from second click due to not awaiting resolve on retrieval of publicKey above.
         //   This is irrelevant as AuthenticateData is only on this page for debugging the function itself. )
         setInputData("Maths Science");
-        AuthenticateData(publicKey, contractAddress, inputData, setAuthentic);
+        setAuthentic(await AuthenticateData(publicKey, contractAddress, inputData));
     }
 
 

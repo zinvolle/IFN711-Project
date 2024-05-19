@@ -1,6 +1,5 @@
 import { CompareToHash, HashDataSHA256 } from '../CryptoTools/CryptoTools.js';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import { useState } from "react";
 
 const { Web3 } = require("web3");
 
@@ -13,58 +12,76 @@ const ABI = compiledContract.abi;
 //      _data: data to be authenticated
 //      setAuthentic: useState function to set authentic to True or False
 
-async function AuthenticateData(_publicKey, _contractAddress, _data, setAuthentic) {
-    async function RetrieveData() {
-        // create contract object to access contract
-        const contract = new web3.eth.Contract(ABI, _contractAddress);
+async function AuthenticateData(_publicKey, _contractAddress, _data) {
+    
+    let [localPublicKey, localHashedData] = await RetrieveData(_contractAddress);
+    
+    let authenticity = await CheckAuthenticity(localPublicKey, localHashedData, _publicKey, _data);
 
-        // get public key
-        const localPublicKey = await contract.methods.getPublicKey().call();
+    return (authenticity);
+}
 
-        // get existing hashed data
-        const localHashedData = await contract.methods.getHashedData().call();
+// Retrieves public key and hashed data from 
+async function RetrieveData(_contractAddress) {
+    // create contract object to access contract
+    const contract = new web3.eth.Contract(ABI, _contractAddress);
 
-        return ([localPublicKey, localHashedData]);
-    }
+    // get public key
+    const localPublicKey = await contract.methods.getPublicKey().call();
 
-    async function CheckAuthenticity([localPublicKey, localHashedData]) {
-        // Test authenticity
-        // check ID
-        if (_publicKey === localPublicKey) {
-            // check hash
-            if (await CompareToHash(_data, localHashedData)) {
-                // set authentic bool value
-                setAuthentic(true);
+    // get existing hashed data
+    const localHashedData = await contract.methods.getHashedData().call();
 
-/*                 // console debugging
-                console.log("Authenticity setting true..." +
-                    "\n\nInput public key: " + _publicKey +
-                    "\nExisting public Key: " + localPublicKey +
-                    "\n\nInput data: " + await HashDataSHA256(_data) +
-                    "\nExisting data: " + localHashedData); */
-            }
-            else {
-                // if hashes don't match
-                setAuthentic(false);
+    return ([localPublicKey, localHashedData]);
+}
 
-/*                 // console debugging
-                console.log("Hashes don't match, setting false..." +
-                    "\n\nInput data: " + await HashDataSHA256(_data) +
-                    "\nExisting data: " + localHashedData); */
-            }
+async function CheckAuthenticity(localPublicKey, localHashedData, _publicKey, _data) {
+
+    /*     console.log("\nlocalPublicKey: " + localPublicKey +
+            "\nlocalHashedData: " + localHashedData +
+            "\npublicKey: " + _publicKey +
+            "\ndata: " + _data); */
+
+    // Test authenticity
+    // check ID
+    if (_publicKey === localPublicKey) {
+        // check hash
+        if (await CompareToHash(_data, localHashedData)) {
+
+            /*             // console debugging
+                        console.log("Authenticity setting true..." +
+                            "\n\nInput public key: " + _publicKey +
+                            "\nExisting public Key: " + localPublicKey +
+                            "\n\nInput data: " + await HashDataSHA256(_data) +
+                            "\nExisting data: " + localHashedData); */
+
+            // set authentic bool value
+            return (true);
+
+
         }
         else {
-            // if public keys don't match
-            setAuthentic(false);
-/* 
-            // console debugging
-            console.log("Public Keys don't match, setting false..." +
-                "\n\nInput public key: " + _publicKey +
-                "\nExisting public Key: " + localPublicKey); */
+
+            /*             // console debugging
+                        console.log("Hashes don't match, setting false..." +
+                            "\n\nInput data: " + await HashDataSHA256(_data) +
+                            "\nExisting data: " + localHashedData); */
+
+            // if hashes don't match
+            return (false);
         }
     }
+    else {
+        /*         // console debugging
+                console.log("Public Keys don't match, setting false..." +
+                    "\n\nInput public key: " + _publicKey +
+                    "\nExisting public Key: " + localPublicKey); */
 
-    RetrieveData().then((value) => { CheckAuthenticity(value) });
+        // if public keys don't match
+        return (false);
+
+
+    }
 }
 
 // export to wider app
