@@ -1,6 +1,6 @@
-/* import { HashDataSHA256, CompareToHash } from '../CryptoTools/CryptoTools.js';
+import { CompareToHash, HashDataSHA256 } from '../CryptoTools/CryptoTools.js';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const { Web3 } = require("web3");
 
@@ -10,52 +10,62 @@ const ABI = compiledContract.abi;
 //  AuthenticateData: This function authenticates provided data using the hash stored on a student's contract
 //    inputs: 
 //       _contractAddress: address of student's contract
-//        _data: data to be authenticated
-//    outputs:
-//        authenticity: Bool of whether or not the _hashedData is authentic
+//      _data: data to be authenticated
+//      setAuthentic: useState function to set authentic to True or False
 
-function AuthenticateData(_contractAddress, _data, existingHash, setAuthentic) {
-    // set up useStates
-    const [error, setError] = useState('');
-    const [hashedData, setHashedData] = useState('');
-    const [hashedInputData, setHashedInputData] = useState('');
-
-    const Authenticate = async () => {
+async function AuthenticateData(_publicKey, _contractAddress, _data, setAuthentic) {
+    async function RetrieveData() {
         // create contract object to access contract
         const contract = new web3.eth.Contract(ABI, _contractAddress);
 
         // get public key
-        contract.methods.getPublicKey().call()
-            .then(publicKey => {
-                setPublicKey(publicKey)
-            })
-            .catch(error => {
-                setError(error)
-                console.log(error)
-            });
+        const localPublicKey = await contract.methods.getPublicKey().call();
 
-        // get hashed data
-        contract.methods.getHashedData().call()
-            .then(hash => {
-                setHashedData(hash)
-            })
-            .catch(error => {
-                setError(error)
-                console.log(error)
-            });
+        // get existing hashed data
+        const localHashedData = await contract.methods.getHashedData().call();
 
-        // hash given data
-        setHashedInputData(await HashDataSHA256(_data));
+        return ([localPublicKey, localHashedData]);
     }
 
-    Authenticate();
+    async function CheckAuthenticity([localPublicKey, localHashedData]) {
+        // Test authenticity
+        // check ID
+        if (_publicKey === localPublicKey) {
+            // check hash
+            if (await CompareToHash(_data, localHashedData)) {
+                // set authentic bool value
+                setAuthentic(true);
 
-    // compare input and public hashes
-    const authenticity = CompareToHash(hashedInputData, hashedData);
+/*                 // console debugging
+                console.log("Authenticity setting true..." +
+                    "\n\nInput public key: " + _publicKey +
+                    "\nExisting public Key: " + localPublicKey +
+                    "\n\nInput data: " + await HashDataSHA256(_data) +
+                    "\nExisting data: " + localHashedData); */
+            }
+            else {
+                // if hashes don't match
+                setAuthentic(false);
 
-    // return result of comparison
-    return authenticity;
+/*                 // console debugging
+                console.log("Hashes don't match, setting false..." +
+                    "\n\nInput data: " + await HashDataSHA256(_data) +
+                    "\nExisting data: " + localHashedData); */
+            }
+        }
+        else {
+            // if public keys don't match
+            setAuthentic(false);
+/* 
+            // console debugging
+            console.log("Public Keys don't match, setting false..." +
+                "\n\nInput public key: " + _publicKey +
+                "\nExisting public Key: " + localPublicKey); */
+        }
+    }
+
+    RetrieveData().then((value) => { CheckAuthenticity(value) });
 }
 
 // export to wider app
-export default AuthenticateData; */
+export default AuthenticateData;

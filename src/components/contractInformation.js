@@ -1,7 +1,8 @@
 import React from "react";
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from "react";
-import CompareToHash from "../CryptoTools/CryptoTools.js";
+import AuthenticateData from "./hashing.js";
+import { HashDataSHA256 } from "../CryptoTools/CryptoTools.js";
 
 const { Web3 } = require("web3");
 
@@ -19,46 +20,48 @@ function ContractInformation() {
     const [authentic, setAuthentic] = useState(false)
 
 
-    const handleClick = async ()=>{
+    const handleClick = async () => {
         const contract = new web3.eth.Contract(ABI, contractAddress);
         contract.methods.getPublicKey().call()
-        .then(publicKey => {
-        setPublicKey(publicKey)
-        })
-        .catch(error => {
-            setError(error)
-            console.log(error)
-        });
+            .then(publicKey => {
+                setPublicKey(publicKey)
+            })
+            .catch(error => {
+                setError(error)
+                console.log(error)
+            });
 
         contract.methods.getHashedData().call()
-        .then(hash => {
-        setHashedStudentSkills(hash)
-        })
-        .catch(error => {
-            setError(error)
-            console.log(error)
-        });
+            .then(hash => {
+                setHashedStudentSkills(hash)
+            })
+            .catch(error => {
+                setError(error)
+                console.log(error)
+            });
 
         contract.methods.getEntries().call()
-        .then(entries => {
-        setEntries(entries)
-        console.log(entries)
-        })
-        .catch(error => {
-            setError(error)
-            console.log(error)
-        });
+            .then(entries => {
+                setEntries(entries)
+                //console.log(entries)
+            })
+            .catch(error => {
+                setError(error)
+                console.log(error)
+            });
 
-        
         // testing of hashing function, to be deleted later...
-        setInputData("Maths\nScience");
-        CompareToHash(inputData, hashedStudentSkills, setAuthentic);
-
+        // ( Currently works but only from second click due to not awaiting resolve on retrieval of publicKey above.
+        //   This is irrelevant as AuthenticateData is only on this page for debugging the function itself. )
+        setInputData("Maths Science");
+        AuthenticateData(publicKey, contractAddress, inputData, setAuthentic);
     }
-    
 
 
-    return(
+
+
+
+    return (
         <div>
             <h1>Contract Information</h1>
 
@@ -72,8 +75,9 @@ function ContractInformation() {
             <h3>Entries</h3>
             <p>{entries}</p>
             {/*testing hashing below*/}
-            <h3>Hashing</h3>
-            <p>Hash authenticity: {authentic}</p>
+            <h3>Authenticity Check</h3>
+            <p>Hashed Data: {authentic.toString()}</p>
+
         </div>
     )
 }

@@ -1,4 +1,3 @@
-import { Hash } from "crypto";
 import React from "react";
 import { useState, useEffect } from "react";
 
@@ -141,11 +140,18 @@ export async function HashDataSHA256(data) {
     return hashHex;
 }
 
-export async function CompareToHash(_data, existingHash, setAuthentic) {
-    // hash input
-    var hashedInput = await HashDataSHA256(_data)
-    // compare hash values
-    setAuthentic(hashedInput === existingHash);
+export async function CompareToHash(_data, existingHash) {
+    // hash data input
+    let hashedInput = await HashDataSHA256(_data);
+    let hashTest = (hashedInput === existingHash);
+    
+    // console debugging
+/*     console.log("CompareToHash:\nNew: " + hashedInput +
+    "\nExisting: " + existingHash +
+    "\nComparison result: " + hashTest); */
+
+    // compare hash values, return bool
+    return (hashTest);
 }
 
 const arrayBufferToBase64 = buffer => {
