@@ -10,14 +10,17 @@ const ABI = compiledContract.abi;
 //    inputs: 
 //       _contractAddress: address of student's contract
 //      _data: data to be authenticated
-//      setAuthentic: useState function to set authentic to True or False
+//    outputs:
+//      authenticity: Boolean value representing if the data sent is authentic or not
 
 async function AuthenticateData(_publicKey, _contractAddress, _data) {
-    
+    // retrieve data
     let [localPublicKey, localHashedData] = await RetrieveData(_contractAddress);
     
+    // check authenticity
     let authenticity = await CheckAuthenticity(localPublicKey, localHashedData, _publicKey, _data);
 
+    // return authenticity
     return (authenticity);
 }
 
