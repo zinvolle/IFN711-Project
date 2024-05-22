@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { Encrypt, Decrypt, Sign, Verify } from '../CryptoTools/CryptoTools';
+import AuthenticateData from './hashing.js'
 
 const { Web3 } = require("web3");
 
@@ -28,6 +29,7 @@ async function getAllStudentDataForEmployer(employerPublicKey) {
             for (let entry of studentData) {
                 entry.studentPublicKey = studentPublicKey
                 entry.studentSignaturePublicKey = studentSignaturePublicKey
+                entry.contractAddress = address
             }
 
             if (studentData.length > 0) {
@@ -78,7 +80,7 @@ async function getContractAddresses() {
 }
 
 //simple student componenent that gets rendered on the screen
-function Student({ studentData, privateKey }) {
+function Student({ studentData }) {
     return (
         <div>
             <h4>Student: {studentData.studentPublicKey}</h4>
@@ -86,6 +88,7 @@ function Student({ studentData, privateKey }) {
             <p>decryped data: {studentData.decryptedData}</p>
             <p>signature: {studentData.signature}</p>
             <p>is Verified: {JSON.stringify(studentData.isVerified)}</p>
+            <p>Hash Compare Result: {JSON.stringify(studentData.hashCompareResult)}</p>
         </div>
     )
 }
@@ -123,9 +126,6 @@ function EmployerPage() {
     const startVerification = async () => {
         try {
             const isVerifiedPromises = studentData.map(async (data) => {
-                const dec = data.decryptedData
-                const signa = data.signature
-                const studentsignakey = data.studentSignaturePublicKey
                 const isVerified = await Verify(data.decryptedData, data.signature, data.studentSignaturePublicKey)
                 return { ...data, isVerified: isVerified };
             });
@@ -133,6 +133,19 @@ function EmployerPage() {
             setStudentData(isVerifiedData);
         }catch(err){
             console.error(err)
+        }
+    }
+
+    const startHashComparison = async () => {
+        try {
+            const compareHashPromises = studentData.map(async (data) => {
+                const hashCompareResult = await AuthenticateData(data.studentPublicKey, data.contractAddress, data.decryptedData)
+                return {...data, hashCompareResult: hashCompareResult}
+            });
+            const compareHashData = await Promise.all(compareHashPromises)
+            setStudentData(compareHashData);
+        } catch(err) {
+            console.log(err)
         }
     }
 
@@ -158,13 +171,15 @@ function EmployerPage() {
                     <button className="btn btn-lg btn-primary btn-block m-3" onClick={startDecryption}>Decrypt all</button>
                 </div>
                 <h2>Signature Verification</h2>
-                <button className="btn btn-lg btn-primary btn-block m-3" onClick={startVerification}>Verify all </button>
+                <button className="btn btn-lg btn-primary btn-block m-3" onClick={startVerification}>Verify All </button>
+                <h2>Compare Hash</h2>
+                <button className="btn btn-lg btn-primary btn-block m-3" onClick={startHashComparison}>Compare Hash All </button>
             </div>
 
 
             {studentData && studentData.length > 0 ? (
                 <div>
-                    <h3>For {studentData[0].employerPublicKey}</h3>
+                    <h3>For employer: {studentData[0].employerPublicKey}</h3>
                     {studentData.map((data, index) => (
                         <Student key={index} studentData={data} />
                     ))}
