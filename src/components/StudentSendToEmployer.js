@@ -10,7 +10,6 @@ const { Web3 } = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 const ABI = compiledContract.abi;
 
-//For Darren and Daniel to input the encryption function
 
 async function addEntryToBlockchain(contractAddress, encryptedStudentData, studentSignature, employerPublicKey){
     try {

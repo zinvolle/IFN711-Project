@@ -101,15 +101,15 @@ export async function Verify(message, signatureBase64, publicKeyBase64) {
     const signature = base64ToArrayBuffer(signatureBase64)
     const encoder = new TextEncoder();
     const data = encoder.encode(message);
-
     const keyData = base64ToArrayBuffer(publicKeyBase64);
-        const publicKey = await crypto.subtle.importKey(
-          "spki",
-          keyData,
-          { name: 'RSASSA-PKCS1-v1_5', hash: { name: 'SHA-256' } },
-          true,
-          ['verify']
-        );
+    
+    const publicKey = await crypto.subtle.importKey(
+        "spki",
+        keyData,
+        { name: 'RSASSA-PKCS1-v1_5', hash: { name: 'SHA-256' } },
+        true,
+        ['verify']
+    );
 
     try {
         const result = await crypto.subtle.verify(
