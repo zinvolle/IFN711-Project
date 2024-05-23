@@ -259,14 +259,11 @@ function CryptoExample() {
           // Export the key to raw format (ArrayBuffer)
           const rawKey = await crypto.subtle.exportKey("raw", key);
   
-          // Convert ArrayBuffer to a hexadecimal string for display or storage
-          const hexKey = Array.from(new Uint8Array(rawKey))
-              .map(b => b.toString(16).padStart(2, '0'))
-              .join('');
+          const base64Key = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
   
-          console.log("Generated AES-256 key (hex):", hexKey);
+          console.log("Generated AES-256 key (hex):", base64Key);
 
-          setSymmetricKeyString(hexKey)
+          setSymmetricKeyString(base64Key)
           setSymmetricKey(key)
   
           return key; // return the generated key
@@ -275,9 +272,20 @@ function CryptoExample() {
       }
   }
 
-  async function encryptWithSymmetricKey(key, data) {
+  async function encryptWithSymmetricKey(keyBase64, data) {
     const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate a random initialization vector (IV)
     const encodedData = new TextEncoder().encode(data); // Encode the data as bytes
+
+    const keyBytes = base64ToArrayBuffer(keyBase64)
+    console.log(keyBytes.length)
+
+    const key = await crypto.subtle.importKey(
+      "raw",
+      keyBytes,
+      { name: "AES-GCM" },
+      false,
+      ["encrypt"]
+  );
 
     try {
         const encryptedData = await crypto.subtle.encrypt(
@@ -307,7 +315,7 @@ function CryptoExample() {
     }
 }
 
-async function decryptDataWithSymmetricKey(key, base64CombinedData) {
+async function decryptDataWithSymmetricKey(keyBase64, base64CombinedData) {
   try {
       // Convert the Base64 string back to a Uint8Array
       const combinedData = Uint8Array.from(atob(base64CombinedData), c => c.charCodeAt(0));
@@ -315,6 +323,17 @@ async function decryptDataWithSymmetricKey(key, base64CombinedData) {
       // Extract the IV and the encrypted data
       const iv = combinedData.slice(0, 12);
       const encryptedData = combinedData.slice(12);
+
+      const keyBytes = base64ToArrayBuffer(keyBase64)
+      console.log(keyBytes.length)
+  
+      const key = await crypto.subtle.importKey(
+        "raw",
+        keyBytes,
+        { name: "AES-GCM" },
+        false,
+        ["decrypt"]
+    );
 
       const decryptedData = await crypto.subtle.decrypt(
           {
@@ -329,7 +348,7 @@ async function decryptDataWithSymmetricKey(key, base64CombinedData) {
       setDecryptedSymmetricMessage(decryptedMessageString)
 
       // Decode the decrypted bytes back into a string
-      return new TextDecoder().decode(decryptedData);
+      return decryptedMessageString
   } catch (error) {
       console.error("Error decrypting data:", error);
   }
@@ -420,8 +439,8 @@ async function decryptDataWithSymmetricKey(key, base64CombinedData) {
       <div style={{marginTop:'40px'}}>
         <h1>Symmetric key Testing</h1>
         <button onClick={generateSymmetricKey}>Generate Symmetric Key</button>
-        <button onClick={() => encryptWithSymmetricKey(symmetricKey, dataToEncryptUsingSymmetricKey)}>Encrypt Message</button>
-        <button onClick={() => decryptDataWithSymmetricKey(symmetricKey, encryptedSymmetricMessage)}>Decrypt Message</button>
+        <button onClick={() => encryptWithSymmetricKey(symmetricKeyString, dataToEncryptUsingSymmetricKey)}>Encrypt Message</button>
+        <button onClick={() => decryptDataWithSymmetricKey(symmetricKeyString, encryptedSymmetricMessage)}>Decrypt Message</button>
         
         <h4>Symmetric Key: {symmetricKeyString}</h4>
         <label> Encrypt message
