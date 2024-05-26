@@ -216,6 +216,29 @@ export async function DecryptWithSymmetricKey(keyBase64, base64CombinedData) {
     }
 }
 
+export async function GenerateSymmetricKey() {
+    try {
+        // Generate an AES-256 key
+        const key = await crypto.subtle.generateKey(
+            {
+                name: "AES-GCM",
+                length: 256 // key length in bits
+            },
+            true, // whether the key is extractable (i.e., can be exported)
+            ["encrypt", "decrypt"] // can be used for these purposes
+        );
+
+        // Export the key to raw format (ArrayBuffer)
+        const rawKey = await crypto.subtle.exportKey("raw", key);
+
+        const base64Key = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
+
+        return base64Key; // return the generated key
+    } catch (error) {
+        console.error("Error generating symmetric key:", error);
+    }
+}
+
 export async function CompareToHash(_data, existingHash) {
     // hash data input
     let hashedInput = await HashDataSHA256(_data);

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import { Encrypt, Decrypt, Sign, Verify } from '../CryptoTools/CryptoTools';
+import { Encrypt, Decrypt, Sign, Verify, DecryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 import AuthenticateData from './hashing.js'
 
 const { Web3 } = require("web3");
@@ -113,7 +113,8 @@ function EmployerPage() {
     const startDecryption = async () => {
         try {  
             const decryptedDataPromises = studentData.map(async (data) => {
-                const decrypted = await Decrypt(data.encryptedData, employerPrivateKey);
+                const symmetricKey = await Decrypt(data.encryptedSymmetricKey, employerPrivateKey);
+                const decrypted = await DecryptWithSymmetricKey(symmetricKey, data.encryptedData);
                 return { ...data, decryptedData: decrypted };
             });
             const decryptedStudentData = await Promise.all(decryptedDataPromises);

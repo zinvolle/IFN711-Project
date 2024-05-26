@@ -8,10 +8,10 @@ contract StudentSkills{
     string public signaturePublicKey; 
 
     struct Entry {
-        string encryptedData; //Might have to make an extra Entry for signatures
+        string encryptedData; 
         string signature;
         string employerPublicKey;
-
+        string encryptedSymmetricKey;
     }
 
     mapping(uint256 => Entry) public entries;
@@ -23,8 +23,8 @@ contract StudentSkills{
         numberOfEntries = 0;
     }
 
-    function addEntry(string memory newEncryptedData, string memory newSignature, string memory newEmployerPublicKey) public {
-        entries[numberOfEntries] = Entry(newEncryptedData, newSignature, newEmployerPublicKey);
+    function addEntry(string memory newEncryptedData, string memory newSignature, string memory newEmployerPublicKey, string memory newEncryptedSymmetricKey) public {
+        entries[numberOfEntries] = Entry(newEncryptedData, newSignature, newEmployerPublicKey, newEncryptedSymmetricKey);
         numberOfEntries++;
     }
 
@@ -47,6 +47,7 @@ contract StudentSkills{
             '{"encryptedData":"', entries[i].encryptedData,
             '", "signature":"', entries[i].signature,
             '", "employerPublicKey":"', entries[i].employerPublicKey,
+            '", "encryptedSymmetricKey":"', entries[i].encryptedSymmetricKey,
             '"}'));
         }
         return dataList;
