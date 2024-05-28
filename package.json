@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@helia/unixfs": "^3.0.6",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.3",
     "crypto": "^1.0.1",
+    "helia": "^4.2.3",
     "mongodb": "^6.6.1",
     "nvm": "^0.0.4",
     "react": "^18.2.0",

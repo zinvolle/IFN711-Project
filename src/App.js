@@ -9,7 +9,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ViewBlocks from './components/ViewBlocks';
 import EmployerPage from './components/EmployerReceiving';
 import EncryptAndDecrypt from './components/EncryptDecrypt';
-import ContractInformation from './components/contractInformation'
+import ContractInformation from './components/contractInformation';
+import Helia from './components/helia';
 
 
 
@@ -18,6 +19,7 @@ function App() {
     <BrowserRouter>
       <Routes>
           <Route index element={<Home />} />
+          <Route path="/helia" element={<Helia />} />
           <Route path="/university/deploy" element={<UniversityUpload />} />
           <Route path="home" element={<Home />}/>
           <Route path="/student/send" element = {<StudentSend />} />
