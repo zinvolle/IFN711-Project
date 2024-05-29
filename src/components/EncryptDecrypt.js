@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Container from './containers';
 
 
 function CryptoExample() {
@@ -405,7 +406,7 @@ async function decryptDataWithSymmetricKey(keyBase64, base64CombinedData) {
 
 
   return (
-    <div className="container">
+    <Container>
       <h2>Asymmetric Public and Private key testing</h2>
       <div>
         <button onClick={encryptMessage}>Encrypt Message</button>
@@ -490,7 +491,7 @@ async function decryptDataWithSymmetricKey(keyBase64, base64CombinedData) {
             setHash(hash))
         }}>Hash</button>
       </div>
-    </div>
+    </Container>
   );
 }
 

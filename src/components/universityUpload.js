@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
+import Container from './containers';
 
 const { Web3 } = require("web3");
 
@@ -53,14 +54,14 @@ function UniversityUpload() {
   };
   
   return (
-    <div className="container d-flex justify-content-center">
-      <div className="row justify-content-center text-center col-md-3" style={{ marginTop: '300px' }}> 
+    <Container>
+      <div className="align-self-center justify-content-center text-center col-4"> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
             <label className="h5">Input Student Public Key
                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
             </label>
-            <label className="h5">Input Student Signature Public Key
+            <label className="h5 mt-1">Input Student Signature Public Key
                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Signature Public Key" onChange={(e) => setStudentSignaturePublicKey(e.target.value)} required autoFocus />
             </label>
             <label className="h5 mt-1">Input skills
@@ -71,7 +72,7 @@ function UniversityUpload() {
           </form>
           <h4>Error: {error}</h4>
       </div>
-    </div>
+    </Container>
   );
 }
 

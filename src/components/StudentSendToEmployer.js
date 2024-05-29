@@ -2,6 +2,7 @@ import React from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
+import Container from './containers';
 
 const { Web3 } = require("web3");
 
@@ -52,8 +53,8 @@ function StudentSend() {
     };
 
     return (
-        <div className="container d-flex justify-content-center">
-            <div className="row justify-content-center text-center col-md-3" style={{ marginTop: '270px' }}>
+        <Container>
+            <div className="row align-self-center justify-content-center text-center col-md-4">
                 <form onSubmit={handleSubmit}>
                     <h1 className="h3 mb-3 font-weight-normal">Send To Employer</h1>
                     <label className="h5">Send To
@@ -73,7 +74,7 @@ function StudentSend() {
             </div>
 
             <h1>Error: {error}</h1>
-        </div>
+        </Container>
     )
 }
 

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { Encrypt, Decrypt, Sign, Verify, DecryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 import AuthenticateData from './hashing.js'
+import Container from './containers.js';
 
 const { Web3 } = require("web3");
 
@@ -152,7 +153,7 @@ function EmployerPage() {
 
     //the actual web page being rendered under here
     return (
-        <div>
+        <Container>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                 <h1 style={{ marginTop: '50px' }}>Students Skills Data</h1>
                 <form onSubmit={handleSubmit}>
@@ -193,7 +194,7 @@ function EmployerPage() {
                     <h2>error: {error}</h2> : <div></div>
                 }
             </div>
-        </div>
+        </Container>
     )
 }
 

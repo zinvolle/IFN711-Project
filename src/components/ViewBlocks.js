@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import React from 'react';
+import Container from "./containers";
 const { Web3 } = require("web3");
 
 //Connecting to Ganache and establishing Contract
@@ -60,6 +61,7 @@ function ViewBlocks(){
     }, []);
 
     return (
+        <Container>
         <div className='container'>
             
            {
@@ -72,6 +74,7 @@ function ViewBlocks(){
             )           
            }
         </div>
+        </Container>
     )
 }
 

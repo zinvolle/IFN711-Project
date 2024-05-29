@@ -3,6 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { useState, useEffect } from "react";
 import AuthenticateData from "./hashing.js";
 import { HashDataSHA256 } from "../CryptoTools/CryptoTools.js";
+import Container from "./containers.js";
 
 const { Web3 } = require("web3");
 
@@ -62,7 +63,7 @@ function ContractInformation() {
 
 
     return (
-        <div>
+        <Container>
             <h1>Contract Information</h1>
 
             <input placeholder="contract address" onChange={(e) => setContractAddress(e.target.value)}></input>
@@ -78,7 +79,7 @@ function ContractInformation() {
             <h3>Authenticity Check</h3>
             <p>Hashed Data: {authentic.toString()}</p>
 
-        </div>
+        </Container>
     )
 }
 

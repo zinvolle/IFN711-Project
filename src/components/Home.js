@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import Container from './containers';
 
 //bunch of links to different endpoints in our website
 function Home() {
     return(
-    <div style = {{display:'flex', justifyContent:'center', textAlign: 'center', alignItems:'center', height:'100vh', }}>
-        <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
+        <Container>
                 <Link to="/viewblocks">
                     <button>View Blocks</button>
                 </Link>
@@ -27,8 +26,7 @@ function Home() {
                 </Link>
             
         
-        </div>
-    </div>
+        </Container>
     )
 }
 
