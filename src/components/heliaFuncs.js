@@ -1,7 +1,7 @@
 import { createHelia } from 'helia';
 import { unixfs } from '@helia/unixfs';
 
-/* export async function HeliaInit(){
+export async function HeliaInit(){
     // create a Helia node
     const helia = await createHelia();
 
@@ -9,7 +9,7 @@ import { unixfs } from '@helia/unixfs';
 
     return([helia, _fs]);
 
-} */
+}
 
 export async function UploadToIPFS(fs, _data){
     // use this TextEncoder to turn strings into Uint8Arrays

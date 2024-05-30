@@ -1,12 +1,11 @@
 import React from "react";
 import { useState, useEffect } from 'react';
 import { HeliaInit, UploadToIPFS, DownloadFromIPFS } from './heliaFuncs.js';
-import { createHelia } from 'helia';
-import { unixfs } from '@helia/unixfs';
+
 
 export default function Helia() {
 
-    const [CID, set_CID] = useState('CID');
+    const [CID, setCID] = useState('CID');
     const [dataToUpload, setDataToUpload] = useState('');
     const [dataRetrieved, setDataRetrieved] = useState('');
     const [helia, setHelia] = useState();
@@ -15,12 +14,13 @@ export default function Helia() {
     useEffect(()=>{HeliaStartUp();},[]);
 
     async function HeliaStartUp(){
-        setHelia(await createHelia());
-        setFs(unixfs(helia));
+        const [_helia, _fs] = await HeliaInit();
+        setHelia(_helia);
+        setFs(_fs);
     }
 
     async function onClickUpload(){
-        set_CID(await UploadToIPFS(fs, dataToUpload));
+        setCID(await UploadToIPFS(fs, dataToUpload));
     }
 
     async function onClickDownload(){
