@@ -16,6 +16,7 @@ function ContractInformation() {
     const [publicKey, setPublicKey] = useState('')
     const [hashedStudentSkills, setHashedStudentSkills] = useState('')
     const [entries, setEntries] = useState('')
+    const [signaturePublicKey, setSignaturePublicKey] = useState('')
     const [inputData, setInputData] = useState('')
     const [authentic, setAuthentic] = useState(false)
 
@@ -49,6 +50,16 @@ function ContractInformation() {
                 setError(error)
                 console.log(error)
             });
+        
+            contract.methods.getSignaturePublicKey().call()
+            .then(key => {
+                setSignaturePublicKey(key)
+                //console.log(entries)
+            })
+            .catch(error => {
+                setError(error)
+                console.log(error)
+            });
 
         // testing of hashing function, to be deleted later...
         // ( Currently works but only from second click due to not awaiting resolve on retrieval of publicKey above.
@@ -70,6 +81,8 @@ function ContractInformation() {
             <button onClick={handleClick}>Retrieve Information</button>
             <h3>Public Key</h3>
             <p>{publicKey}</p>
+            <h3>Signature Public Key</h3>
+            <p>{signaturePublicKey}</p>
             <h3>Hashed Skills</h3>
             <p>{hashedStudentSkills}</p>
             <h3>Entries</h3>

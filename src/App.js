@@ -31,7 +31,7 @@ function App() {
           <Route path='/crypto' element = {<EncryptAndDecrypt />} />
           <Route path='/contract/information' element = {<ContractInformation/>}/>
           <Route path='/ipfsuploader' element = {<IPFSDownloader/>}/>
-          <Route path='/users' element = {<MongoUsers/>}/>
+          <Route path='/userfetchtest' element = {<MongoUsers/>}/>
       </Routes>
     </BrowserRouter>
   );
