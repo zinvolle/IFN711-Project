@@ -21,8 +21,6 @@
     "datastore-core": "^9.1.1",
     "express": "^4.19.2",
     "helia": "^4.2.1",
-    "ipfs": "^0.66.1",
-    "ipfs-http-client": "^60.0.1",
     "it-all": "^3.0.6",
     "kubo-rpc-client": "^4.1.1",
     "libp2p": "^1.2.0",

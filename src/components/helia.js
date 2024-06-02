@@ -9,6 +9,7 @@ export default function Helia(_heliaFs) {
     const [heliaFs, setHeliaFs] = useState(null);
     const [dataInput, setDataInput] = useState('');
     const [CID, setCID] = useState('');
+    const [CIDToDownload, setCIDToDownload] = useState('');
     const [dataOutput, setDataOutput] = useState('');
 
     async function StartupHelia() {
@@ -33,8 +34,6 @@ export default function Helia(_heliaFs) {
         catch(err){
             setCID(err.message);
         }
-
-        
     }
 
     async function DownloadFromHelia() {
@@ -42,7 +41,7 @@ export default function Helia(_heliaFs) {
         const decoder = new TextDecoder()
         let text = ''
 
-        for await (const chunk of heliaFs.cat(CID)) {
+        for await (const chunk of heliaFs.cat(CIDToDownload)) {
             text += decoder.decode(chunk, {
                 stream: true
             })
@@ -59,8 +58,11 @@ export default function Helia(_heliaFs) {
             <h4>Data Upload</h4>
             <input placeholder='Data to upload...' onChange={(e) => { setDataInput(e.target.value) }}></input>
             <button onClick={() => { UploadToHelia(); }}>Upload</button>
-            <p>CID: {CID}</p>
+            <p>Uploaded CID: {CID}</p>
             <h4>Data Download</h4>
+            <div>CID to download:  
+            <input placeholder='CID to download...' onChange={(e) =>{setCIDToDownload(e.target.value) }}></input>
+            </div>
             <button onClick={() => { DownloadFromHelia(); }}>Download</button>
             <p>Data downloaded: {dataOutput}</p>
         </div>
