@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import Container from './containers';
 
 
 function CryptoExample() {
   const [publicKey, setPublicKey] = useState(null);
   const [privateKey, setPrivateKey] = useState(null);
+  const [symmetricKeyString, setSymmetricKeyString] = useState(null);
+  const [symmetricKey, setSymmetricKey] = useState(null);
+  const [encryptedSymmetricMessage, setEncryptedSymmetricMessage] = useState(null);
+  const [decryptedSymmetricMessage, setDecryptedSymmetricMessage] = useState(null);
+  const [dataToEncryptUsingSymmetricKey, setDataToEncryptUsingSymmetricKey] = useState(null);
   const [publicKeyString, setPublicKeyString] = useState(null)
   const [privateKeyString, setPrivateKeyString] = useState(null)
   const [encryptedMessage, setEncryptedMessage] = useState('');
@@ -239,38 +245,149 @@ function CryptoExample() {
         return { publicKey, privateKey };
     };
 
-    async function generateKeyPairForSigningAndVerification() {
-        try {
-          const keyPair = await crypto.subtle.generateKey(
-            {
-              name: 'RSASSA-PKCS1-v1_5',
-              modulusLength: 2048,
-              publicExponent: new Uint8Array([0x01, 0x00, 0x01]), // 65537
-              hash: { name: 'SHA-256' },
-            },
-            true, // Extractable
-            ['sign', 'verify']
+    const generateSymmetricKey = async () => {
+      try {
+          // Generate an AES-256 key
+          const key = await crypto.subtle.generateKey(
+              {
+                  name: "AES-GCM",
+                  length: 256 // key length in bits
+              },
+              true, // whether the key is extractable (i.e., can be exported)
+              ["encrypt", "decrypt"] // can be used for these purposes
           );
-      
-          const publicKey = keyPair.publicKey;
-          const privateKey = keyPair.privateKey;
-        
-          const publicKeyExport = await crypto.subtle.exportKey('spki', keyPair.publicKey);
-          const privateKeyExport = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
+  
+          // Export the key to raw format (ArrayBuffer)
+          const rawKey = await crypto.subtle.exportKey("raw", key);
+  
+          const base64Key = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
+  
+          console.log("Generated AES-256 key (hex):", base64Key);
 
-          const publicKeyBase64 = arrayBufferToBase64(publicKeyExport);
-          const privateKeyBase64 = arrayBufferToBase64(privateKeyExport);
-          
-          console.log('New Signature Public: ',publicKeyBase64)
-          console.log('New Signature Private: ', privateKeyBase64)
-
-          importSignatureKeysFromBase64(publicKeyBase64, privateKeyBase64)
-          
-        } catch (error) {
-          console.error('Key pair generation failed:', error);
-          throw error;
-        }
+          setSymmetricKeyString(base64Key)
+          setSymmetricKey(key)
+  
+          return key; // return the generated key
+      } catch (error) {
+          console.error("Error generating symmetric key:", error);
       }
+  }
+
+  async function encryptWithSymmetricKey(keyBase64, data) {
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate a random initialization vector (IV)
+    const encodedData = new TextEncoder().encode(data); // Encode the data as bytes
+
+    const keyBytes = base64ToArrayBuffer(keyBase64)
+    console.log(keyBytes.length)
+
+    const key = await crypto.subtle.importKey(
+      "raw",
+      keyBytes,
+      { name: "AES-GCM" },
+      false,
+      ["encrypt"]
+  );
+
+    try {
+        const encryptedData = await crypto.subtle.encrypt(
+            {
+                name: "AES-GCM",
+                iv: iv // The IV should be unique for every encryption
+            },
+            key,
+            encodedData
+        );
+        const combinedData = new Uint8Array(iv.length + encryptedData.byteLength);
+        combinedData.set(iv);
+        combinedData.set(new Uint8Array(encryptedData), iv.length);
+
+        // Convert the combined data to a Base64 string for easy storage/transmission
+        const base64CombinedData = btoa(String.fromCharCode(...combinedData));
+
+        setEncryptedSymmetricMessage(base64CombinedData)
+
+        // Return both the IV and the encrypted data
+        return {
+            iv: iv,
+            encryptedData: encryptedData
+        };
+    } catch (error) {
+        console.error("Error encrypting data:", error);
+    }
+}
+
+async function decryptDataWithSymmetricKey(keyBase64, base64CombinedData) {
+  try {
+      // Convert the Base64 string back to a Uint8Array
+      const combinedData = Uint8Array.from(atob(base64CombinedData), c => c.charCodeAt(0));
+
+      // Extract the IV and the encrypted data
+      const iv = combinedData.slice(0, 12);
+      const encryptedData = combinedData.slice(12);
+
+      const keyBytes = base64ToArrayBuffer(keyBase64)
+      console.log(keyBytes.length)
+  
+      const key = await crypto.subtle.importKey(
+        "raw",
+        keyBytes,
+        { name: "AES-GCM" },
+        false,
+        ["decrypt"]
+    );
+
+      const decryptedData = await crypto.subtle.decrypt(
+          {
+              name: "AES-GCM",
+              iv: iv
+          },
+          key,
+          encryptedData
+      );
+
+      const decryptedMessageString = new TextDecoder().decode(decryptedData);
+      setDecryptedSymmetricMessage(decryptedMessageString)
+
+      // Decode the decrypted bytes back into a string
+      return decryptedMessageString
+  } catch (error) {
+      console.error("Error decrypting data:", error);
+  }
+}
+
+
+  async function generateKeyPairForSigningAndVerification() {
+      try {
+        const keyPair = await crypto.subtle.generateKey(
+          {
+            name: 'RSASSA-PKCS1-v1_5',
+            modulusLength: 2048,
+            publicExponent: new Uint8Array([0x01, 0x00, 0x01]), // 65537
+            hash: { name: 'SHA-256' },
+          },
+          true, // Extractable
+          ['sign', 'verify']
+        );
+    
+        const publicKey = keyPair.publicKey;
+        const privateKey = keyPair.privateKey;
+      
+        const publicKeyExport = await crypto.subtle.exportKey('spki', keyPair.publicKey);
+        const privateKeyExport = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
+
+        const publicKeyBase64 = arrayBufferToBase64(publicKeyExport);
+        const privateKeyBase64 = arrayBufferToBase64(privateKeyExport);
+        
+        console.log('New Signature Public: ',publicKeyBase64)
+        console.log('New Signature Private: ', privateKeyBase64)
+
+        importSignatureKeysFromBase64(publicKeyBase64, privateKeyBase64)
+        
+      } catch (error) {
+        console.error('Key pair generation failed:', error);
+        throw error;
+      }
+    }
 
       async function hashDataSHA256(data) {
         // Convert data to ArrayBuffer
@@ -289,8 +406,8 @@ function CryptoExample() {
 
 
   return (
-    <div className="container">
-      <h2>Crypto</h2>
+    <Container>
+      <h2>Asymmetric Public and Private key testing</h2>
       <div>
         <button onClick={encryptMessage}>Encrypt Message</button>
         <button onClick={decryptMessage}>Decrypt Message</button>
@@ -318,6 +435,21 @@ function CryptoExample() {
             importKeysFromBase64(testPublicKey,testPrivateKey)
         }} style = {{width:'60px', marginLeft:'100px'}}>
         Test</button>
+      </div>
+
+      <div style={{marginTop:'40px'}}>
+        <h1>Symmetric key Testing</h1>
+        <button onClick={generateSymmetricKey}>Generate Symmetric Key</button>
+        <button onClick={() => encryptWithSymmetricKey(symmetricKeyString, dataToEncryptUsingSymmetricKey)}>Encrypt Message</button>
+        <button onClick={() => decryptDataWithSymmetricKey(symmetricKeyString, encryptedSymmetricMessage)}>Decrypt Message</button>
+        
+        <h4>Symmetric Key: {symmetricKeyString}</h4>
+        <label> Encrypt message
+            <input type = 'text' onChange={(e) => setDataToEncryptUsingSymmetricKey(e.target.value)} placeholder='encrypt message'/>
+        </label>
+        <h3>Encrypted Message: {encryptedSymmetricMessage}</h3>
+
+        <h3>Decrypted Message: {decryptedSymmetricMessage}</h3>
       </div>
 
       <div style = {{marginTop:'60px'}}>
@@ -359,7 +491,7 @@ function CryptoExample() {
             setHash(hash))
         }}>Hash</button>
       </div>
-    </div>
+    </Container>
   );
 }
 

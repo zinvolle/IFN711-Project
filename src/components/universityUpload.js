@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
+import Container from './containers';
 
 const { Web3 } = require("web3");
 
@@ -15,12 +16,12 @@ const contract = new web3.eth.Contract(ABI);
 
 
 //deployment of Contract function
-async function deployContract(_studentPublicKey, _hashedStudentSkills) {
+async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey) {
   try {
       const accounts = await web3.eth.getAccounts();
       const mainAccount = accounts[0];
       console.log("Default Account:", mainAccount);
-      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_hashedStudentSkills] }).send({ from: mainAccount, gas: 4700000 });
+      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_hashedStudentSkills, _studentSignaturePublicKey] }).send({ from: mainAccount, gas: 4700000 });
       console.log("Contract deployed at address:", deployedContract.options.address);
       return deployedContract; 
   } catch (error) {
@@ -38,13 +39,14 @@ function UniversityUpload() {
   const [studentPublicKey, setStudentPublicKey] = useState('')
   const [studentSkills, setStudentSkills] = useState('')
   const [error, setError] = useState('')
+  const [studentSignaturePublicKey, setStudentSignaturePublicKey] = useState('')
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       
       const hashedStudentSkills = await HashDataSHA256(studentSkills)
-      await deployContract(studentPublicKey, hashedStudentSkills);
+      await deployContract(studentPublicKey, hashedStudentSkills, studentSignaturePublicKey);
       window.location.reload();
     } catch (error) {
       setError(error)
@@ -52,22 +54,25 @@ function UniversityUpload() {
   };
   
   return (
-    <div className="container d-flex justify-content-center">
-      <div className="row justify-content-center text-center col-md-4" style={{ marginTop: '200px' }}> 
+    <Container>
+      <div className="align-self-center justify-content-center text-center col-4"> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
-            <label className="h5">Input Public Key </label>
-            <input type="text" id="studentpublickey" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
-
-            <label className="h5 mt-1">Input skills </label>
-            
+            <label className="h5">Input Student Public Key
+               <input type="text" id="studentpublickey" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
+            </label>
+            <label className="h5 mt-1">Input Student Signature Public Key
+               <input type="text" id="studentpublickey" className="form-control" placeholder="Student Signature Public Key" onChange={(e) => setStudentSignaturePublicKey(e.target.value)} required autoFocus />
+            </label>
+            <label className="h5 mt-1">Input skills
               <textarea type="text" id="studentskills" style={{ width: '100%', minHeight: '200px' }} className="form-control" placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
+            </label>
             <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Deploy</button>
            
           </form>
           <h4>Error: {error}</h4>
       </div>
-    </div>
+    </Container>
   );
 }
 

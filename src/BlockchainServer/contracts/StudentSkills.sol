@@ -4,24 +4,27 @@ pragma solidity ^0.8.13;
 contract StudentSkills{
     string public publicKey;
     string public hashedData;
-    uint256 public numberOfEntries; 
+    uint256 public numberOfEntries;
+    string public signaturePublicKey; 
 
     struct Entry {
-        string encryptedData; //Might have to make an extra Entry for signatures
+        string encryptedData; 
         string signature;
         string employerPublicKey;
+        string encryptedSymmetricKey;
     }
 
     mapping(uint256 => Entry) public entries;
 
-    constructor(string memory newPublicKey, string memory newHashedData){
+    constructor(string memory newPublicKey, string memory newHashedData, string memory newSignaturePublicKey){
         publicKey = newPublicKey;
         hashedData = newHashedData;
+        signaturePublicKey = newSignaturePublicKey;
         numberOfEntries = 0;
     }
 
-    function addEntry(string memory newEncryptedData, string memory newSignature, string memory newEmployerPublicKey) public {
-        entries[numberOfEntries] = Entry(newEncryptedData, newSignature, newEmployerPublicKey);
+    function addEntry(string memory newEncryptedData, string memory newSignature, string memory newEmployerPublicKey, string memory newEncryptedSymmetricKey) public {
+        entries[numberOfEntries] = Entry(newEncryptedData, newSignature, newEmployerPublicKey, newEncryptedSymmetricKey);
         numberOfEntries++;
     }
 
@@ -44,6 +47,7 @@ contract StudentSkills{
             '{"encryptedData":"', entries[i].encryptedData,
             '", "signature":"', entries[i].signature,
             '", "employerPublicKey":"', entries[i].employerPublicKey,
+            '", "encryptedSymmetricKey":"', entries[i].encryptedSymmetricKey,
             '"}'));
         }
         return dataList;
@@ -51,6 +55,11 @@ contract StudentSkills{
     function getPublicKey() public view returns (string memory){
         return publicKey;
     }
+    
+    function getSignaturePublicKey() public view returns (string memory){
+        return signaturePublicKey;
+    }    
+
 
     function getHashedData() public view returns (string memory){
         return hashedData;
