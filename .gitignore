@@ -1,2 +1,2 @@
-node_modules
-*.json
+/react-frontend/node_modules
+/react-frontend/*.json
