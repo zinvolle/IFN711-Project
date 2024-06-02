@@ -2,12 +2,11 @@ import React from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
-<<<<<<< HEAD
+
 import Container from './containers';
-=======
+
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 
->>>>>>> MongoIntegration
 
 const { Web3 } = require("web3");
 
