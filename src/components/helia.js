@@ -1,55 +1,43 @@
 import React from "react";
 import { useState, useEffect } from 'react';
 import { HeliaInit, UploadToIPFS, DownloadFromIPFS } from './heliaFuncs.js';
+import { createHelia } from 'helia';
+import { unixfs } from '@helia/unixfs';
 
 
 export default function Helia() {
 
-    const [CID, setCID] = useState('CID');
-    const [dataToUpload, setDataToUpload] = useState('');
-    const [dataRetrieved, setDataRetrieved] = useState('');
-    const [helia, setHelia] = useState();
-    const [fs, setFs] = useState();
+    useEffect(()=>{
+        HeliaImplementation();
+    }, [] );
 
-    useEffect(()=>{HeliaStartUp();},[]);
+    async function HeliaImplementation() {
+        // create a Helia node
+        const helia = await createHelia()
 
-    async function HeliaStartUp(){
-        const [_helia, _fs] = await HeliaInit();
-        setHelia(_helia);
-        setFs(_fs);
+        // create a filesystem on top of Helia, in this case it's UnixFS
+        const fs = unixfs(helia)
+
+        // we will use this TextEncoder to turn strings into Uint8Arrays
+        const encoder = new TextEncoder()
+
+        // add the bytes to your node and receive a unique content identifier
+        const cid = await fs.addBytes(encoder.encode('Hello World 101'))
+
+        console.log('Added file:', cid.toString())
+
+        // this decoder will turn Uint8Arrays into strings
+        const decoder = new TextDecoder()
+        let text = ''
+
+        for await (const chunk of fs.cat(cid)) {
+            text += decoder.decode(chunk, {
+                stream: true
+            })
+        }
+
+        console.log('Added file contents:', text)
     }
-
-    async function onClickUpload(){
-        setCID(await UploadToIPFS(fs, dataToUpload));
-    }
-
-    async function onClickDownload(){
-        setDataRetrieved(await DownloadFromIPFS(fs, CID));
-    }
-
-    return (
-        <div>
-            <h1>Helia Implementation</h1>
-            <div>
-                <h4>Input data to upload to IPFS:</h4>
-                <input placeholder="data to upload..." onChange={(e) => setDataToUpload(e.target.value)}></input>
-            </div>
-            <br></br>
-            <div>
-                <button onClick={onClickUpload}>Upload to IPFS</button>
-                <p>CID is: {CID}</p>
-            </div>
-            <div>
-                <h4>Retrieve data from IPFS:</h4>
-                <button onClick={onClickDownload}>Download from IPFS</button>
-                <br></br>
-                <p>Data is: {dataRetrieved}</p>
-            </div>
-
-
-        </div>
-    )
-
 }
 
 
