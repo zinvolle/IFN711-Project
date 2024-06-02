@@ -1,43 +1,68 @@
-import React from "react";
-import { useState, useEffect } from 'react';
-import { HeliaInit, UploadToIPFS, DownloadFromIPFS } from './heliaFuncs.js';
-import { createHelia } from 'helia';
-import { unixfs } from '@helia/unixfs';
+import { React, useEffect, useState } from 'react';
+import { unixfs } from '@helia/unixfs'
+import { createHelia } from 'helia'
+import { createLibp2p } from 'libp2p';
+import { webSockets } from '@libp2p/websockets';
 
+export default function Helia(_heliaFs) {
 
-export default function Helia() {
+    const [heliaFs, setHeliaFs] = useState(null);
+    const [dataInput, setDataInput] = useState('');
+    const [CID, setCID] = useState('');
+    const [dataOutput, setDataOutput] = useState('');
 
-    useEffect(()=>{
-        HeliaImplementation();
-    }, [] );
+    async function StartupHelia() {
+        const libp2p = await createLibp2p({
+            transports: [ webSockets() ]
+        })
+        const helia = await createHelia({
+            libp2p
+        });
+        setHeliaFs(unixfs(helia));
+    }
 
-    async function HeliaImplementation() {
-        // create a Helia node
-        const helia = await createHelia()
-
-        // create a filesystem on top of Helia, in this case it's UnixFS
-        const fs = unixfs(helia)
-
+    async function UploadToHelia() {
         // we will use this TextEncoder to turn strings into Uint8Arrays
         const encoder = new TextEncoder()
 
         // add the bytes to your node and receive a unique content identifier
-        const cid = await fs.addBytes(encoder.encode('Hello World 101'))
+        try{
+            const cid = await heliaFs.addBytes(encoder.encode(dataInput));
+            setCID(cid.toString());
+        }
+        catch(err){
+            setCID(err.message);
+        }
 
-        console.log('Added file:', cid.toString())
+        
+    }
 
+    async function DownloadFromHelia() {
         // this decoder will turn Uint8Arrays into strings
         const decoder = new TextDecoder()
         let text = ''
 
-        for await (const chunk of fs.cat(cid)) {
+        for await (const chunk of heliaFs.cat(CID)) {
             text += decoder.decode(chunk, {
                 stream: true
             })
         }
 
-        console.log('Added file contents:', text)
+        setDataOutput(text);
     }
+
+    return (
+        <div>
+            <h1>Helia Test Page</h1>
+            <h4>Helia Startup:</h4>
+            <button onClick={() => { StartupHelia(); }}>Start Helia</button>
+            <h4>Data Upload</h4>
+            <input placeholder='Data to upload...' onChange={(e) => { setDataInput(e.target.value) }}></input>
+            <button onClick={() => { UploadToHelia(); }}>Upload</button>
+            <p>CID: {CID}</p>
+            <h4>Data Download</h4>
+            <button onClick={() => { DownloadFromHelia(); }}>Download</button>
+            <p>Data downloaded: {dataOutput}</p>
+        </div>
+    )
 }
-
-
