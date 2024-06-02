@@ -3,7 +3,11 @@ import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { Encrypt, Decrypt, Sign, Verify, DecryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 import AuthenticateData from './hashing.js'
+
 import Container from './containers.js';
+
+import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
+
 
 const { Web3 } = require("web3");
 
@@ -23,14 +27,16 @@ async function getAllStudentDataForEmployer(employerPublicKey) {
             const contract = new web3.eth.Contract(ABI, address);
             const studentPublicKey = await contract.methods.getPublicKey().call()
             const studentSignaturePublicKey = await contract.methods.getSignaturePublicKey().call()
-
+            const student = await FindUserByPublicKey(studentPublicKey);
+            const SUI = student.username;
             const data = await readEntries(address)
             const studentData = data.filter(entry => entry.employerPublicKey == employerPublicKey); //filters out all of the employer public keys and finds one that matches
 
-            for (let entry of studentData) {
+            for (let entry of studentData) {    
                 entry.studentPublicKey = studentPublicKey
                 entry.studentSignaturePublicKey = studentSignaturePublicKey
                 entry.contractAddress = address
+                entry.SUI = SUI
             }
 
             if (studentData.length > 0) {
@@ -76,7 +82,6 @@ async function getContractAddresses() {
             });
         }
     }
-
     return contractAddresses;
 }
 
@@ -84,7 +89,7 @@ async function getContractAddresses() {
 function Student({ studentData }) {
     return (
         <div>
-            <h4>Student: {studentData.studentPublicKey}</h4>
+            <h4>Student: {studentData.SUI}</h4>
             <p>encrypted data: {studentData.encryptedData}</p>
             <p>decryped data: {studentData.decryptedData}</p>
             <p>signature: {studentData.signature}</p>
@@ -96,14 +101,22 @@ function Student({ studentData }) {
 
 
 function EmployerPage() {
-    const [employerPublicKey, setEmployerPublicKey] = useState('')
     const [employerPrivateKey, setEmployerPrivateKey] = useState('')
     const [error, setError] = useState('')
     const [studentData, setStudentData] = useState('')
+    const [EUI, setEUI] = useState(''); //EUI stands for Employer Unique Identifier
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            const employerData = await FindUser(EUI);
+            if (employerData.error || employerData.type != 'employer'){
+                setError('No such employer exists')
+                setStudentData('')
+                return
+            }
+            setError(null)
+            const employerPublicKey = employerData.publicKey
             const data = await getAllStudentDataForEmployer(employerPublicKey)
             setStudentData(data)
         } catch (error) {
@@ -157,8 +170,8 @@ function EmployerPage() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                 <h1 style={{ marginTop: '50px' }}>Students Skills Data</h1>
                 <form onSubmit={handleSubmit}>
-                    <label style={{ marginBottom: '30px', fontSize: '25px', }}>Employer Public Key
-                        <input type="text" className="form-control" placeholder="Employer Public Key" onChange={(e) => setEmployerPublicKey(e.target.value)} required autoFocus />
+                    <label style={{ marginBottom: '30px', fontSize: '25px', }}>Employer Unique Identifier
+                        <input type="text" className="form-control" placeholder="Employer Unique Identifier" onChange={(e) => setEUI(e.target.value)} required autoFocus />
                     </label>
                     <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Submit</button>
                 </form>
@@ -177,24 +190,27 @@ function EmployerPage() {
                 <h2>Compare Hash</h2>
                 <button className="btn btn-lg btn-primary btn-block m-3" onClick={startHashComparison}>Compare Hash All </button>
             </div>
-
-
-            {studentData && studentData.length > 0 ? (
-                <div>
-                    <h3>For employer: {studentData[0].employerPublicKey}</h3>
-                    {studentData.map((data, index) => (
-                        <Student key={index} studentData={data} />
-                    ))}
-                </div>)
-                :
-                <h4>nothing to show</h4>
-            }
             <div>
                 {error ?
                     <h2>error: {error}</h2> : <div></div>
                 }
             </div>
+            {studentData && studentData.length > 0 ? (
+                <div>
+                    <h3>For employer: {EUI}</h3>
+                    {studentData.map((data, index) => (
+                        <Student key={index} studentData={data} />
+                    ))}
+                </div>)
+                :
+                <div></div>
+            }
+            
+      
+
         </Container>
+           
+
     )
 }
 

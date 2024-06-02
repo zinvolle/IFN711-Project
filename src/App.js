@@ -12,6 +12,7 @@ import EncryptAndDecrypt from './components/EncryptDecrypt';
 import ContractInformation from './components/contractInformation'
 import IPFS from './components/ipfs'
 import {IPFSUploader,IPFSDownloader} from './components/ipfs';
+import MongoUsers from './components/mongo';
 //import IPFSDownloader from './components/ipfs';
 
 
@@ -30,6 +31,7 @@ function App() {
           <Route path='/crypto' element = {<EncryptAndDecrypt />} />
           <Route path='/contract/information' element = {<ContractInformation/>}/>
           <Route path='/ipfsuploader' element = {<IPFSDownloader/>}/>
+          <Route path='/userfetchtest' element = {<MongoUsers/>}/>
       </Routes>
     </BrowserRouter>
   );

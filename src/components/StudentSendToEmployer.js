@@ -2,7 +2,12 @@ import React from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
+<<<<<<< HEAD
 import Container from './containers';
+=======
+import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
+
+>>>>>>> MongoIntegration
 
 const { Web3 } = require("web3");
 
@@ -33,15 +38,22 @@ async function addEntryToBlockchain(contractAddress, encryptedStudentData, stude
 }
 
 function StudentSend() {
-    const [employerPublicKey, setEmployerPublicKey] = useState('')
     const [studentPrivateSignatureKey, setStudentPrivateSignature] = useState('')
     const [studentSkillsData, setStudentSkillsData] = useState('')
     const [contractAddress, setContractAddress] = useState('')
     const [error, setError] = useState('')
+    const [employerUI, setEmployerUI] = useState('')
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            const employerData = await FindUser(employerUI);
+            if (employerData.error || employerData.type != 'employer'){
+                setError('No such employer exists')
+                return
+            }
+            setError(null)
+            const employerPublicKey = employerData.publicKey
             const symmetricKey = await GenerateSymmetricKey();
             const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkillsData);
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
@@ -58,7 +70,7 @@ function StudentSend() {
                 <form onSubmit={handleSubmit}>
                     <h1 className="h3 mb-3 font-weight-normal">Send To Employer</h1>
                     <label className="h5">Send To
-                        <input type="text" className="form-control" placeholder="Employer Public Key" onChange={(e) => setEmployerPublicKey(e.target.value)} required autoFocus />
+                        <input type="text" className="form-control" placeholder="Employer Unique Identifer" onChange={(e) => setEmployerUI(e.target.value)} required autoFocus />
                     </label>
                     <label className="h5">Your Contract Address
                         <input type="text" className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />

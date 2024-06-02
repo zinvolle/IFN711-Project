@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
+<<<<<<< HEAD
 import Container from './containers';
+=======
+import { FindUser } from '../MongoDB/MongoFunctions';
+>>>>>>> MongoIntegration
 
 const { Web3 } = require("web3");
 
@@ -40,13 +44,21 @@ function UniversityUpload() {
   const [studentSkills, setStudentSkills] = useState('')
   const [error, setError] = useState('')
   const [studentSignaturePublicKey, setStudentSignaturePublicKey] = useState('')
+  const [studentIdentifer, setStudentIdentifier] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      
+      const data = await FindUser(studentIdentifer);
+      if (data.error) {
+        setError('No data found for the given student identifier.');
+        return; 
+      }
+      const publicKey = data.publicKey;
+      const signatureKey = data.signaturePublicKey;
+      console.log(signatureKey);
       const hashedStudentSkills = await HashDataSHA256(studentSkills)
-      await deployContract(studentPublicKey, hashedStudentSkills, studentSignaturePublicKey);
+      await deployContract(publicKey, hashedStudentSkills, signatureKey);
       window.location.reload();
     } catch (error) {
       setError(error)
@@ -58,11 +70,16 @@ function UniversityUpload() {
       <div className="align-self-center justify-content-center text-center col-4"> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
+<<<<<<< HEAD
             <label className="h5">Input Student Public Key
                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
             </label>
             <label className="h5 mt-1">Input Student Signature Public Key
                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Signature Public Key" onChange={(e) => setStudentSignaturePublicKey(e.target.value)} required autoFocus />
+=======
+            <label className="h5">Input Student Unique Identifier
+               <input type="text" id="studentpublickey" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />
+>>>>>>> MongoIntegration
             </label>
             <label className="h5 mt-1">Input skills
               <textarea type="text" id="studentskills" style={{ width: '100%', minHeight: '200px' }} className="form-control" placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
