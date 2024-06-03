@@ -1,5 +1,5 @@
 
-import { React, useEffect, useState } from 'react';
+import { React } from 'react';
 import UniversityUpload from './components/universityUpload';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/Home'
@@ -11,9 +11,7 @@ import EmployerPage from './components/EmployerReceiving';
 import EncryptAndDecrypt from './components/EncryptDecrypt';
 import ContractInformation from './components/contractInformation';
 import Helia from './components/helia';
-import IPFS from './components/ipfs'
 import {IPFSUploader,IPFSDownloader} from './components/ipfs';
-import { InitHelia } from './components/heliaFuncs';
 //import IPFSDownloader from './components/ipfs';
 
 

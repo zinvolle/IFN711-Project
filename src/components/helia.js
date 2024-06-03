@@ -1,10 +1,7 @@
-import { React, useEffect, useState } from 'react';
-import { unixfs } from '@helia/unixfs'
-import { createHelia } from 'helia'
-import { createLibp2p } from 'libp2p';
-import { webSockets } from '@libp2p/websockets';
+import { React, useState } from 'react';
+import { InitHelia, UploadToHelia, DownloadFromHelia } from './heliaFuncs.js';
 
-export default function Helia(_heliaFs) {
+export default function Helia() {
 
     const [heliaFs, setHeliaFs] = useState(null);
     const [dataInput, setDataInput] = useState('');
@@ -12,58 +9,35 @@ export default function Helia(_heliaFs) {
     const [CIDToDownload, setCIDToDownload] = useState('');
     const [dataOutput, setDataOutput] = useState('');
 
-    async function StartupHelia() {
-        const libp2p = await createLibp2p({
-            transports: [ webSockets() ]
-        })
-        const helia = await createHelia({
-            libp2p
-        });
-        setHeliaFs(unixfs(helia));
+    async function StartHeliaButton() {
+        console.log('Starting Helia Node...')
+        setHeliaFs(await InitHelia());
     }
 
-    async function UploadToHelia() {
-        // we will use this TextEncoder to turn strings into Uint8Arrays
-        const encoder = new TextEncoder()
-
-        // add the bytes to your node and receive a unique content identifier
-        try{
-            const cid = await heliaFs.addBytes(encoder.encode(dataInput));
-            setCID(cid.toString());
-        }
-        catch(err){
-            setCID(err.message);
-        }
+    async function UploadButton() {
+        console.log("Uploading: " + dataInput);
+        setCID(await UploadToHelia(heliaFs, dataInput));
     }
 
-    async function DownloadFromHelia() {
-        // this decoder will turn Uint8Arrays into strings
-        const decoder = new TextDecoder()
-        let text = ''
-
-        for await (const chunk of heliaFs.cat(CIDToDownload)) {
-            text += decoder.decode(chunk, {
-                stream: true
-            })
-        }
-
-        setDataOutput(text);
+    async function DownloadButton() {
+        console.log('Downloading from: ' + CIDToDownload);
+        setDataOutput(await DownloadFromHelia(heliaFs, CIDToDownload));
     }
 
     return (
         <div>
             <h1>Helia Test Page</h1>
             <h4>Helia Startup:</h4>
-            <button onClick={() => { StartupHelia(); }}>Start Helia</button>
+            <button onClick={ StartHeliaButton }>Start Helia</button>
             <h4>Data Upload</h4>
             <input placeholder='Data to upload...' onChange={(e) => { setDataInput(e.target.value) }}></input>
-            <button onClick={() => { UploadToHelia(); }}>Upload</button>
+            <button onClick={ UploadButton }>Upload</button>
             <p>Uploaded CID: {CID}</p>
             <h4>Data Download</h4>
             <div>CID to download:  
             <input placeholder='CID to download...' onChange={(e) =>{setCIDToDownload(e.target.value) }}></input>
             </div>
-            <button onClick={() => { DownloadFromHelia(); }}>Download</button>
+            <button onClick={ DownloadButton }>Download</button>
             <p>Data downloaded: {dataOutput}</p>
         </div>
     )
