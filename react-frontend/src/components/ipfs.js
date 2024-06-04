@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+/* import React, { useState } from 'react';
 import { create } from 'ipfs-http-client';
 import { Buffer } from 'buffer';
 import all from 'it-all';
@@ -122,4 +122,4 @@ const IPFSDownloader = () => {
 
 
 export {IPFSUploader,IPFSDownloader}
-export default IPFSUploader
+export default IPFSUploader */
