@@ -1,0 +1,22 @@
+{
+  "name": "ipfs-backend",
+  "version": "1.0.0",
+  "dependencies": {
+    "@chainsafe/libp2p-noise": "^15.0.0",
+    "@chainsafe/libp2p-yamux": "^6.0.2",
+    "@libp2p/bootstrap": "^10.0.24",
+    "@libp2p/identify": "^2.0.2",
+    "@libp2p/websockets": "^8.0.24",
+    "blockstore-fs": "^1.1.10",
+    "datastore-core": "^9.2.9",
+    "helia": "^4.0.1",
+    "libp2p": "^1.2.0"
+  },
+  "description": "Helia node backend",
+  "main": "heliaBackend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
