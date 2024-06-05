@@ -3,7 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
 
-import Container from './containers';
+import {Container} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 

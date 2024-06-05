@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Container from './containers';
+import {Container} from './containers.js';
 
 
 function CryptoExample() {

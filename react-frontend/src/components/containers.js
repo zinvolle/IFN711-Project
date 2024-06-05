@@ -8,4 +8,15 @@ const Container = ({children}) => {
     );
 };
 
-export default Container;
+const ErrorMsg = ({error}) => {
+    
+    return(
+        <div>
+            {error ?
+                <h2>error: {error}</h2> : <div></div>
+            }
+        </div>
+    );
+};
+
+export {Container, ErrorMsg};

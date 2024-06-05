@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Container from './containers';
+import {Container} from './containers.js';
 
 //bunch of links to different endpoints in our website
 function Home() {

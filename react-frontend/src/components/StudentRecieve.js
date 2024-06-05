@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import Container from './containers';
+import {Container} from './containers.js';
 
 const { Web3 } = require("web3");
 

@@ -3,7 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { useState, useEffect } from "react";
 import AuthenticateData from "./hashing.js";
 import { HashDataSHA256 } from "../CryptoTools/CryptoTools.js";
-import Container from "./containers.js";
+import {Container} from './containers.js';
 
 const { Web3 } = require("web3");
 

@@ -1,5 +1,6 @@
 import { React, useState } from 'react';
 import { InitHelia, UploadToHelia, DownloadFromHelia } from './heliaFuncs.js';
+import {Container} from './containers.js';
 
 export default function Helia() {
 
@@ -25,7 +26,7 @@ export default function Helia() {
     }
 
     return (
-        <div>
+        <Container>
             <h1>Helia Test Page</h1>
             <h4>Helia Startup:</h4>
             <button onClick={ StartHeliaButton }>Start Helia</button>
@@ -39,6 +40,6 @@ export default function Helia() {
             </div>
             <button onClick={ DownloadButton }>Download</button>
             <p>Data downloaded: {dataOutput}</p>
-        </div>
+        </Container>
     )
 }

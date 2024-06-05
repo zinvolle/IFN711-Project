@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import React from 'react';
-import Container from "./containers";
+import {Container} from './containers.js';
 const { Web3 } = require("web3");
 
 //Connecting to Ganache and establishing Contract
@@ -10,10 +10,12 @@ const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 //Individual Block component rendered on the web page
 function Block( {block} ){
     return (
-        <div className='block'>
-            <h5>Block Number: {block.blockNumber}</h5>
-            <p>Block hash: {block.blockHash}</p>
-            <p>Created Contract Address: {block.contractAddress}</p>            
+        <div className='block row border border-dark m-1' >
+            <div class='col pt-3'>
+                <h5>Block Number: {block.blockNumber}</h5>
+                <p>Block hash: {block.blockHash}</p>
+                <p>Created Contract Address: {block.contractAddress}</p>            
+            </div>
         </div>
     );
 }

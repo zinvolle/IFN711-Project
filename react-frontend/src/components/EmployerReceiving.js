@@ -4,7 +4,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { Encrypt, Decrypt, Sign, Verify, DecryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 import AuthenticateData from './hashing.js'
 
-import Container from './containers.js';
+import {Container, ErrorMsg} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 
@@ -190,11 +190,7 @@ function EmployerPage() {
                 <h2>Compare Hash</h2>
                 <button className="btn btn-lg btn-primary btn-block m-3" onClick={startHashComparison}>Compare Hash All </button>
             </div>
-            <div>
-                {error ?
-                    <h2>error: {error}</h2> : <div></div>
-                }
-            </div>
+            <ErrorMsg error={error} />
             {studentData && studentData.length > 0 ? (
                 <div>
                     <h3>For employer: {EUI}</h3>

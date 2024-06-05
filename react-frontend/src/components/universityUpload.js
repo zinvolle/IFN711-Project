@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
-import Container from './containers';
+import {Container} from './containers.js';
 
 import { FindUser } from '../MongoDB/MongoFunctions';
 
