@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
-import {Container} from './containers.js';
+import {Container, ErrorMsg} from './containers.js';
 
 import { FindUser } from '../MongoDB/MongoFunctions';
 
@@ -66,19 +66,19 @@ function UniversityUpload() {
   
   return (
     <Container>
-      <div className="align-self-center justify-content-center text-center col-4"> 
+      <div className="align-self-center col-md-5"> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
             <label className="h5">Input Student Unique Identifier
                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />
             </label>
-            <label className="h5 mt-1">Input skills
-              <textarea type="text" id="studentskills" style={{ width: '100%', minHeight: '200px' }} className="form-control" placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
+            <label className="h5 w-100">Input skills
+              <textarea type="text" id="studentskills" className="form-control" style={{height:"200px"}}  placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
             </label>
             <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Deploy</button>
            
           </form>
-          <h4>Error: {error}</h4>
+          <ErrorMsg error={error} />
       </div>
     </Container>
   );

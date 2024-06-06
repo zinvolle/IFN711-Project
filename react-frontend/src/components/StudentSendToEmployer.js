@@ -3,7 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
 
-import {Container} from './containers.js';
+import {Container, ErrorMsg} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 
@@ -65,26 +65,28 @@ function StudentSend() {
 
     return (
         <Container>
-            <div className="row align-self-center justify-content-center text-center col-md-4">
+            <div className="row align-self-center w-75">
                 <form onSubmit={handleSubmit}>
                     <h1 className="h3 mb-3 font-weight-normal">Send To Employer</h1>
-                    <label className="h5">Send To
+                    <label className="h5 w-100">Send To
                         <input type="text" className="form-control" placeholder="Employer Unique Identifer" onChange={(e) => setEmployerUI(e.target.value)} required autoFocus />
                     </label>
-                    <label className="h5">Your Contract Address
+                    <label className="h5 w-100">Your Contract Address
                         <input type="text" className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />
                     </label>
-                    <label className="h5 mt-1">Your Private Signature Key
+                    <label className="h5 w-100">Your Private Signature Key
                         <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
                     </label>
-                    <label className="h5 mt-1">Your skills data
+                    <label className="h5 w-50">Your skills data
                         <textarea type="text" style={{ width: '100%', minHeight: '200px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
                     </label>
-                    <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Send</button>
+                    <div>
+                        <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Send</button>
+                    </div>
                 </form>
             </div>
 
-            <h1>Error: {error}</h1>
+            <ErrorMsg error={error} />
         </Container>
     )
 }

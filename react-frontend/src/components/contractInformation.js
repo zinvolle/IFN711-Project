@@ -75,23 +75,26 @@ function ContractInformation() {
 
     return (
         <Container>
-            <h1>Contract Information</h1>
-
-            <input placeholder="contract address" onChange={(e) => setContractAddress(e.target.value)}></input>
-
-            <button onClick={handleClick}>Retrieve Information</button>
-            <h3>Public Key</h3>
-            <p>{publicKey}</p>
-            <h3>Signature Public Key</h3>
-            <p>{signaturePublicKey}</p>
-            <h3>Hashed Skills</h3>
-            <p>{hashedStudentSkills}</p>
-            <h3>Entries</h3>
-            <p>{entries}</p>
-            {/*testing hashing below*/}
-            <h3>Authenticity Check</h3>
-            <p>Hashed Data: {authentic.toString()}</p>
-
+            <div className="row align-self-center w-75">
+                <h1>Contract Information</h1>
+                <div className="input-group mb-5">
+                    <input className="form-control" placeholder="contract address" onChange={(e) => setContractAddress(e.target.value)}></input>
+                    <div className="input-group-append"><button className="btn btn-primary btn-block" onClick={handleClick}>Retrieve Information</button></div>
+                </div>
+                <div className="text-break">
+                    <h3>Public Key</h3>
+                        <p>{publicKey}</p>
+                    <h3>Signature Public Key</h3>
+                        <p>{signaturePublicKey}</p>
+                    <h3>Hashed Skills</h3>
+                        <p>{hashedStudentSkills}</p>
+                    <h3>Entries</h3>
+                        <p>{entries}</p>
+                    {/*testing hashing below*/}
+                    <h3>Authenticity Check</h3>
+                        <p>Hashed Data: {authentic.toString()}</p>
+                </div>
+            </div>
         </Container>
     )
 }

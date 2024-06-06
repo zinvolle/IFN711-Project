@@ -88,11 +88,11 @@ async function getContractAddresses() {
 //simple student componenent that gets rendered on the screen
 function Student({ studentData }) {
     return (
-        <div>
+        <div class='border border-dark m-1 p-1'>
             <h4>Student: {studentData.SUI}</h4>
             <p>encrypted data: {studentData.encryptedData}</p>
             <p>decryped data: {studentData.decryptedData}</p>
-            <p>signature: {studentData.signature}</p>
+            <p class="text-break">signature: {studentData.signature}</p>
             <p>is Verified: {JSON.stringify(studentData.isVerified)}</p>
             <p>Hash Compare Result: {JSON.stringify(studentData.hashCompareResult)}</p>
         </div>
@@ -167,32 +167,43 @@ function EmployerPage() {
     //the actual web page being rendered under here
     return (
         <Container>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+            <div className='mw-50 mx-auto'>
                 <h1 style={{ marginTop: '50px' }}>Students Skills Data</h1>
-                <form onSubmit={handleSubmit}>
-                    <label style={{ marginBottom: '30px', fontSize: '25px', }}>Employer Unique Identifier
-                        <input type="text" className="form-control" placeholder="Employer Unique Identifier" onChange={(e) => setEUI(e.target.value)} required autoFocus />
-                    </label>
-                    <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Submit</button>
-                </form>
-            </div>
+                <div className='mb-1'>
+                    <h2>Block Reception</h2>
+                    <form onSubmit={handleSubmit}>
+                        <label className='h5' for='EmployerUID'>Employer Unique Identifier </label>
+                        <div className='input-group'>
+                            <input type="text" className="form-control" id='EmployerUID' placeholder="Employer Unique Identifier" onChange={(e) => setEUI(e.target.value)} required autoFocus />
+                            <div className='mx-1 input-group-append'>
+                                <button className="btn btn-primary btn-block" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                <div>
-                    <h2>Decryption</h2>
-                    <label style={{ fontSize: '25px', }}>
+                <div className='mb-1'>
+                    <h2>Block Decryption</h2>
+                    
+                    <label className='h5 w-100'> Employer Private Key
                         <input type="text" className="form-control" placeholder="Employer Private Key" onChange={(e) => setEmployerPrivateKey(e.target.value)} required autoFocus />
                     </label>
-                    <button className="btn btn-lg btn-primary btn-block m-3" onClick={startDecryption}>Decrypt all</button>
+                    <button className="btn btn-primary btn-block" onClick={startDecryption}>Decrypt all</button>
                 </div>
-                <h2>Signature Verification</h2>
-                <button className="btn btn-lg btn-primary btn-block m-3" onClick={startVerification}>Verify All </button>
-                <h2>Compare Hash</h2>
-                <button className="btn btn-lg btn-primary btn-block m-3" onClick={startHashComparison}>Compare Hash All </button>
+
+                <div className='mb-1'>
+                    <h2>Signature Verification</h2>
+                    <button className="btn btn-primary btn-block" onClick={startVerification}>Verify All </button>
+                </div>
+
+                <div className='mb-1'>
+                    <h2>Compare Hashing</h2>
+                    <button className="btn btn-primary btn-block" onClick={startHashComparison}>Compare All </button>
+                </div>
             </div>
             <ErrorMsg error={error} />
             {studentData && studentData.length > 0 ? (
-                <div>
+                <div className='align-self-center w-75'>
                     <h3>For employer: {EUI}</h3>
                     {studentData.map((data, index) => (
                         <Student key={index} studentData={data} />

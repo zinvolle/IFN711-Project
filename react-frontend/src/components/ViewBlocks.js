@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import React from 'react';
-import {Container} from './containers.js';
+import {Container, ErrorMsg} from './containers.js';
 const { Web3 } = require("web3");
 
 //Connecting to Ganache and establishing Contract
@@ -67,9 +67,8 @@ function ViewBlocks(){
         <div className='container'>
             
            {
-            errorMessage ? (
-                <h1>Error: {errorMessage}</h1>
-            ) : (
+            (<ErrorMsg error={errorMessage} />) 
+            ?? (
                 blocks.map((block, index) => (
                     <Block key={index} block={block} />
                 ))

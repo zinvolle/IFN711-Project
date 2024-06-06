@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import {Container} from './containers.js';
+import {Container, ErrorMsg} from './containers.js';
 
 const { Web3 } = require("web3");
 
@@ -95,13 +95,13 @@ function StudentRecieve(){
     //the actual web page being rendered under here
     return(
         <Container>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection:'column'}}>
-               <h1 style={{marginTop:'50px'}}>Students Skills Data</h1>
-               <form onSubmit={handleSubmit}>
-                <label style= {{marginBottom:'30px', fontSize:'25px',}}>Public Key
-                    <input type="text" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
-                </label>
-                <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Submit</button>
+            <div className="row align-self-center w-75">
+                <h1 className="mb-5 font-weight-normal">Students Skills Data</h1>
+                <form onSubmit={handleSubmit}>
+                    <label className="h4 w-100">Public Key
+                        <input type="text" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
+                    </label>
+                    <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Submit</button>
                 </form>
            </div>
            {studentData && studentData.length > 0? (          
@@ -112,13 +112,9 @@ function StudentRecieve(){
             ))}
             </div>)
             : 
-            <h4>nothing to show</h4>
+            <h4>No Data to show</h4>
             } 
-           <div>
-             {error? 
-             <h2>error: {error}</h2> : <div></div>
-             }
-           </div>
+            <ErrorMsg error={error} />
         </Container>
     )
 }
