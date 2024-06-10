@@ -6,6 +6,7 @@ import {Container} from './containers.js';
 function Home() {
     return(
         <Container>
+            <h1>Homepage</h1>
                 <Link to="/viewblocks">
                     <button>View Blocks</button>
                 </Link>
