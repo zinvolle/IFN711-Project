@@ -1,24 +1,21 @@
 import React from "react";
 
+const Navigation = ({children}) => {
+    return(
+        <nav class="navbar bg-light align-items-center justify-content-center fixed-top" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            {children}
+        </ol>
+        </nav>
+    )
+}
+
 const Container = ({children}) => {
     return(
         <div>
-            <nav class="navbar navbar-expand-sm bg-light justify-content-center fixed-top">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="../">Homepage</a>
-                </div>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Page 1</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Page 2</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Page 3</a></li>
-                </ul>
-            </nav>
-
             <div style = {{display:'flex', justifyContent:'center', backgroundColor:'AntiqueWhite' }}>
-                <div style={{display:'flex', justifyContent:'center', padding: '35px', alignItems:'center', flexDirection:'column', textAlign:'center', gap:'20px', minHeight:'100vh', minWidth:'50vh', backgroundColor:'White'}}>
+                <div style={{display:'flex', justifyContent:'center', padding: '20px', marginTop: '0px', alignItems:'center', flexDirection:'column', textAlign:'center', gap:'20px', minHeight:'100vh', minWidth:'50vh', backgroundColor:'White'}}>
                     {children}
                 </div>
             </div>
@@ -37,4 +34,4 @@ const ErrorMsg = ({error}) => {
     );
 };
 
-export {Container, ErrorMsg};
+export {Container, ErrorMsg, Navigation};

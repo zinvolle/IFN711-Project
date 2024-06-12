@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import React from 'react';
-import {Container, ErrorMsg} from './containers.js';
+import {Container, ErrorMsg, Navigation} from './containers.js';
 const { Web3 } = require("web3");
 
 //Connecting to Ganache and establishing Contract
@@ -64,6 +64,9 @@ function ViewBlocks(){
 
     return (
         <Container>
+            <Navigation>
+                <li class="breadcrumb-item active" aria-current="page">View Blocks</li>
+            </Navigation>
         <div className='container'>
             
            {

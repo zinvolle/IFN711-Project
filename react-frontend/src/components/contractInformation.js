@@ -3,7 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { useState, useEffect } from "react";
 import AuthenticateData from "./hashing.js";
 import { HashDataSHA256 } from "../CryptoTools/CryptoTools.js";
-import {Container} from './containers.js';
+import {Container, ErrorMsg, Navigation} from './containers.js';
 
 const { Web3 } = require("web3");
 
@@ -75,6 +75,9 @@ function ContractInformation() {
 
     return (
         <Container>
+            <Navigation>
+                <li class="breadcrumb-item active" aria-current="page">Contract Information</li>
+            </Navigation>
             <div className="row align-self-center w-75">
                 <h1>Contract Information</h1>
                 <div className="input-group mb-5">

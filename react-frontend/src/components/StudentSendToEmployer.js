@@ -3,7 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
 
-import {Container, ErrorMsg} from './containers.js';
+import {Container, ErrorMsg, Navigation} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 
@@ -65,6 +65,10 @@ function StudentSend() {
 
     return (
         <Container>
+            <Navigation>
+                <li class="breadcrumb-item">Student</li>
+                <li class="breadcrumb-item active" aria-current="page">Deploy</li>
+            </Navigation>
             <div className="row align-self-center w-75">
                 <form onSubmit={handleSubmit}>
                     <h1 className="h3 mb-3 font-weight-normal">Send To Employer</h1>
@@ -78,7 +82,7 @@ function StudentSend() {
                         <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
                     </label>
                     <label className="h5 w-50">Your skills data
-                        <textarea type="text" style={{ width: '100%', minHeight: '200px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
+                        <textarea type="text" style={{ width: '100%', minHeight: '100px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
                     </label>
                     <div>
                         <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Send</button>

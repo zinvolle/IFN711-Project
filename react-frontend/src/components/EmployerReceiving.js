@@ -4,7 +4,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { Encrypt, Decrypt, Sign, Verify, DecryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 import AuthenticateData from './hashing.js'
 
-import {Container, ErrorMsg} from './containers.js';
+import {Container, ErrorMsg, Navigation} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 
@@ -167,8 +167,12 @@ function EmployerPage() {
     //the actual web page being rendered under here
     return (
         <Container>
+            <Navigation>
+                <li class="breadcrumb-item">Employer</li>
+                <li class="breadcrumb-item active" aria-current="page">Recieving</li>
+            </Navigation>
             <div className='mw-50 mx-auto'>
-                <h1 style={{ marginTop: '50px' }}>Students Skills Data</h1>
+                <h1 className='mt-4'>Students Skills Data</h1>
                 <div className='mb-1'>
                     <h2>Block Reception</h2>
                     <form onSubmit={handleSubmit}>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import {Container, ErrorMsg} from './containers.js';
+import {Container, ErrorMsg, Navigation} from './containers.js';
 
 const { Web3 } = require("web3");
 
@@ -95,6 +95,10 @@ function StudentRecieve(){
     //the actual web page being rendered under here
     return(
         <Container>
+            <Navigation>
+                <li class="breadcrumb-item">Student</li>
+                <li class="breadcrumb-item active" aria-current="page">Recieving</li>
+            </Navigation>
             <div className="row align-self-center w-75">
                 <h1 className="mb-5 font-weight-normal">Students Skills Data</h1>
                 <form onSubmit={handleSubmit}>

@@ -1,29 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {Container} from './containers.js';
+import {Container, Navigation} from './containers.js';
 
 //bunch of links to different endpoints in our website
 function Home() {
     return(
         <Container>
+            <Navigation/>
             <h1>Homepage</h1>
+                
                 <Link to="/viewblocks">
-                    <button>View Blocks</button>
+                <button class="btn btn-outline-primary">View Blocks</button>
                 </Link>
                 <Link to="/student/send">
-                    <button>Send To Employer</button>
+                <button class="btn btn-outline-primary">Send To Employer</button>
                 </Link>
                 <Link to="/student/receive">
-                    <button>Student View</button>
+                <button class="btn btn-outline-primary">Student View</button>
                 </Link>
                 <Link to="/university/deploy">
-                    <button>Deploy a contract</button>
+                <button class="btn btn-outline-primary">Deploy Contract</button>
                 </Link>
                 <Link to="/employer/dashboard">
-                    <button>Employer View</button>
+                <button class="btn btn-outline-primary">Employer View</button>
                 </Link>
                 <Link to="/contract/information">
-                    <button>Contract Information</button>
+                <button class="btn btn-outline-primary">Contract Information</button>
                 </Link>
             
         

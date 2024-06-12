@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
-import {Container, ErrorMsg} from './containers.js';
+import {Container, ErrorMsg, Navigation} from './containers.js';
 
 import { FindUser } from '../MongoDB/MongoFunctions';
 
@@ -66,7 +66,11 @@ function UniversityUpload() {
   
   return (
     <Container>
-      <div className="align-self-center col-md-5"> 
+      <Navigation>
+          <li class="breadcrumb-item">University</li>
+          <li class="breadcrumb-item active" aria-current="page">Deploy</li>
+      </Navigation>
+      <div className="align-self-center w-75"> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
             <label className="h5">Input Student Unique Identifier
