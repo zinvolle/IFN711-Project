@@ -53,6 +53,7 @@ function ViewBlocks(){
                     }
                 }
                 setBlocks(blockData); 
+                console.log(JSON.stringify(blockData))
             } catch (error) {
                 console.error('Error:', error);
                 setErrorMessage(error.message);
@@ -64,19 +65,21 @@ function ViewBlocks(){
 
     return (
         <Container>
+
             <Navigation>
                 <li class="breadcrumb-item active" aria-current="page">View Blocks</li>
             </Navigation>
         <div className='container'>
             
-           {
-            (<ErrorMsg error={errorMessage} />) 
-            ?? (
+        {
+            errorMessage ? (
+                <ErrorMsg error={errorMessage} />
+            ) : (
                 blocks.map((block, index) => (
                     <Block key={index} block={block} />
                 ))
-            )           
-           }
+            )
+        }
         </div>
         </Container>
     )
