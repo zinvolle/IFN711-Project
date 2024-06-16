@@ -1,9 +1,12 @@
+/* eslint-disable no-console */
+
 import { noise } from '@chainsafe/libp2p-noise'
 import { yamux } from '@chainsafe/libp2p-yamux'
 import { json } from '@helia/json'
 import { bootstrap } from '@libp2p/bootstrap'
 import { identify } from '@libp2p/identify'
 import { webSockets } from '@libp2p/websockets'
+import { multiaddr } from '@multiformats/multiaddr'
 import { FsBlockstore } from 'blockstore-fs'
 import { MemoryDatastore } from 'datastore-core'
 import { createHelia } from 'helia'
@@ -33,16 +36,6 @@ async function createNode() {
         streamMuxers: [
             yamux()
         ],
-        peerDiscovery: [
-            bootstrap({
-                list: [
-                    '/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-                    '/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
-                    '/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb',
-                    '/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt'
-                ]
-            })
-        ],
         services: {
             identify: identify()
         }
@@ -53,6 +46,8 @@ async function createNode() {
         libp2p
     })
 }
+
+console.log("Running code...");
 
 // create two helia nodes
 const node1 = await createNode()
