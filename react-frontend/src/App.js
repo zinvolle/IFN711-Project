@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ViewBlocks from './components/ViewBlocks';
 import EmployerPage from './components/EmployerReceiving';
 import EncryptAndDecrypt from './components/EncryptDecrypt';
-import ContractInformation from './components/contractInformation'
+import ContractInformation from './components/contractInformation';
 import IPFS from './components/ipfs'
 import {IPFSUploader,IPFSDownloader} from './components/ipfs';
 import MongoUsers from './components/mongo';

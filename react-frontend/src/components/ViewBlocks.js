@@ -69,14 +69,15 @@ function ViewBlocks(){
             </Navigation>
         <div className='container'>
             
-           {
-            (<ErrorMsg error={errorMessage} />) 
-            ?? (
+        {
+            errorMessage ? (
+                <ErrorMsg error={errorMessage} />
+            ) : (
                 blocks.map((block, index) => (
                     <Block key={index} block={block} />
                 ))
-            )           
-           }
+            )
+        }
         </div>
         </Container>
     )
