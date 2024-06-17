@@ -5,7 +5,9 @@ contract StudentSkills{
     string public publicKey;
     string public hashedData;
     uint256 public numberOfEntries;
-    string public signaturePublicKey; 
+    string public studentSignaturePublicKey; 
+    string public universitySignaturePublicKey;
+    string public universitySignature;
 
     struct Entry {
         string encryptedData; 
@@ -16,10 +18,12 @@ contract StudentSkills{
 
     mapping(uint256 => Entry) public entries;
 
-    constructor(string memory newPublicKey, string memory newHashedData, string memory newSignaturePublicKey){
+    constructor(string memory newPublicKey, string memory newHashedData, string memory newStudentSignaturePublicKey, string memory newUniversitySignaturePublicKey, string memory newUniversitySignature){
         publicKey = newPublicKey;
         hashedData = newHashedData;
-        signaturePublicKey = newSignaturePublicKey;
+        studentSignaturePublicKey = newStudentSignaturePublicKey;
+        universitySignaturePublicKey = newUniversitySignaturePublicKey;
+        universitySignature = newUniversitySignature;
         numberOfEntries = 0;
     }
 
@@ -56,10 +60,17 @@ contract StudentSkills{
         return publicKey;
     }
     
-    function getSignaturePublicKey() public view returns (string memory){
-        return signaturePublicKey;
+    function getStudentSignaturePublicKey() public view returns (string memory){
+        return studentSignaturePublicKey;
     }    
 
+    function getUniversitySignaturePublicKey() public view returns (string memory){
+        return universitySignaturePublicKey;
+    }    
+
+    function getUniversitySignature() public view returns (string memory){
+        return universitySignature;
+    }    
 
     function getHashedData() public view returns (string memory){
         return hashedData;

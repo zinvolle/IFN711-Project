@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import { HashDataSHA256 } from '../CryptoTools/CryptoTools';
+import { HashDataSHA256, Sign } from '../CryptoTools/CryptoTools';
 import {Container, ErrorMsg, Navigation} from './containers.js';
-
 import { FindUser } from '../MongoDB/MongoFunctions';
 
 
@@ -19,12 +18,12 @@ const contract = new web3.eth.Contract(ABI);
 
 
 //deployment of Contract function
-async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey) {
+async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature) {
   try {
       const accounts = await web3.eth.getAccounts();
       const mainAccount = accounts[0];
       console.log("Default Account:", mainAccount);
-      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_hashedStudentSkills, _studentSignaturePublicKey] }).send({ from: mainAccount, gas: 4700000 });
+      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature] }).send({ from: mainAccount, gas: 4700000 });
       console.log("Contract deployed at address:", deployedContract.options.address);
       return deployedContract; 
   } catch (error) {
@@ -44,20 +43,28 @@ function UniversityUpload() {
   const [error, setError] = useState('')
   const [studentSignaturePublicKey, setStudentSignaturePublicKey] = useState('')
   const [studentIdentifer, setStudentIdentifier] = useState('');
+  const [universityIdentifier, setUniversityIdentifier] = useState('');
+  const [universityPrivateSigKey, setUniversityPrivateSigKey] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const data = await FindUser(studentIdentifer);
-      if (data.error) {
+      const studentData = await FindUser(studentIdentifer);
+      if (studentData.error) {
         setError('No data found for the given student identifier.');
         return; 
       }
-      const publicKey = data.publicKey;
-      const signatureKey = data.signaturePublicKey;
-      console.log(signatureKey);
+      const uniData = await FindUser(universityIdentifier);
+      if (uniData.error) {
+        setError('No data found for the given university identifier');
+        return
+      }
+      const studentPublicKey = studentData.publicKey;
+      const studentSignatureKey = studentData.signaturePublicKey;
+      const universitySignatureKey = uniData.signaturePublicKey;
+      const universitySignature = await Sign(studentSkills, universityPrivateSigKey);
       const hashedStudentSkills = await HashDataSHA256(studentSkills)
-      await deployContract(publicKey, hashedStudentSkills, signatureKey);
+      await deployContract(studentPublicKey, hashedStudentSkills, studentSignatureKey, universitySignatureKey, universitySignature);
       window.location.reload();
     } catch (error) {
       setError(error)
@@ -73,9 +80,17 @@ function UniversityUpload() {
       <div className="align-self-center w-75"> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
-            <label className="h5">Input Student Unique Identifier
-               <input type="text" id="studentpublickey" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />
-            </label>
+            <div style = {{flexDirection:'column', display:'flex'}}>
+              <label className="h5">Input University Unique Identifier
+                <input type="text" id="unipublickey" className="form-control" placeholder="University Unique Identifier" onChange={(e) => setUniversityIdentifier(e.target.value)} required autoFocus />
+              </label>
+              <label className="h5">Input University Signature Private Key
+                <input type="text" id="unipublickey" className="form-control" placeholder="University Private Signature Key" onChange={(e) => setUniversityPrivateSigKey(e.target.value)} required autoFocus />
+              </label>
+              <label className="h5">Input Student Unique Identifier
+                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />
+              </label>
+            </div>
             <label className="h5 w-100">Input skills
               <textarea type="text" id="studentskills" className="form-control" style={{height:"200px"}}  placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
             </label>

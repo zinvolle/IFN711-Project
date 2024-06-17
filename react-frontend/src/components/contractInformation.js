@@ -17,7 +17,9 @@ function ContractInformation() {
     const [publicKey, setPublicKey] = useState('')
     const [hashedStudentSkills, setHashedStudentSkills] = useState('')
     const [entries, setEntries] = useState('')
-    const [signaturePublicKey, setSignaturePublicKey] = useState('')
+    const [studentSignaturePublicKey, setStudentSignaturePublicKey] = useState('')
+    const [uniSignaturePublicKey, setUniSignaturePublicKey] = useState('')
+    const [uniSignature, setUniSignature] = useState('')
     const [inputData, setInputData] = useState('')
     const [authentic, setAuthentic] = useState(false)
 
@@ -45,22 +47,38 @@ function ContractInformation() {
         contract.methods.getEntries().call()
             .then(entries => {
                 setEntries(entries)
-                //console.log(entries)
             })
             .catch(error => {
                 setError(error)
                 console.log(error)
             });
         
-            contract.methods.getSignaturePublicKey().call()
-            .then(key => {
-                setSignaturePublicKey(key)
-                //console.log(entries)
-            })
-            .catch(error => {
-                setError(error)
-                console.log(error)
-            });
+        contract.methods.getStudentSignaturePublicKey().call()
+        .then(key => {
+            setStudentSignaturePublicKey(key)
+        })
+        .catch(error => {
+            setError(error)
+            console.log(error)
+        });
+
+        contract.methods.getUniversitySignaturePublicKey().call()
+        .then(key => {
+            setUniSignaturePublicKey(key)
+        })
+        .catch(error => {
+            setError(error)
+            console.log(error)
+        });
+
+        contract.methods.getUniversitySignature().call()
+        .then(key => {
+            setUniSignature(key)
+        })
+        .catch(error => {
+            setError(error)
+            console.log(error)
+        });
 
         // testing of hashing function, to be deleted later...
         // ( Currently works but only from second click due to not awaiting resolve on retrieval of publicKey above.
@@ -88,11 +106,15 @@ function ContractInformation() {
                     <h3>Public Key</h3>
                         <p>{publicKey}</p>
                     <h3>Signature Public Key</h3>
-                        <p>{signaturePublicKey}</p>
+                        <p>{studentSignaturePublicKey}</p>
                     <h3>Hashed Skills</h3>
                         <p>{hashedStudentSkills}</p>
                     <h3>Entries</h3>
                         <p>{entries}</p>
+                    <h3>University Signature Public Key</h3>
+                    <p>{uniSignaturePublicKey}</p>
+                    <h3>University Signature</h3>
+                    <p>{uniSignature}</p>
                     {/*testing hashing below*/}
                     <h3>Authenticity Check</h3>
                         <p>Hashed Data: {authentic.toString()}</p>

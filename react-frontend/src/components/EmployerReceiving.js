@@ -26,7 +26,9 @@ async function getAllStudentDataForEmployer(employerPublicKey) {
         for (const address of contractAddresses) { //iterate through every address
             const contract = new web3.eth.Contract(ABI, address);
             const studentPublicKey = await contract.methods.getPublicKey().call()
-            const studentSignaturePublicKey = await contract.methods.getSignaturePublicKey().call()
+            const studentSignaturePublicKey = await contract.methods.getStudentSignaturePublicKey().call()
+            const universitySignaturePublicKey = await contract.methods.getUniversitySignaturePublicKey().call()
+            const universitySignature = await contract.methods.getUniversitySignature().call();
             const student = await FindUserByPublicKey(studentPublicKey);
             const SUI = student.username;
             const data = await readEntries(address)
@@ -36,6 +38,8 @@ async function getAllStudentDataForEmployer(employerPublicKey) {
                 entry.studentPublicKey = studentPublicKey
                 entry.studentSignaturePublicKey = studentSignaturePublicKey
                 entry.contractAddress = address
+                entry.universitySignaturePublicKey = universitySignaturePublicKey
+                entry.universitySignature = universitySignature
                 entry.SUI = SUI
             }
 
@@ -141,7 +145,9 @@ function EmployerPage() {
     const startVerification = async () => {
         try {
             const isVerifiedPromises = studentData.map(async (data) => {
-                const isVerified = await Verify(data.decryptedData, data.signature, data.studentSignaturePublicKey)
+                const isVerifiedStudent = await Verify(data.decryptedData, data.signature, data.studentSignaturePublicKey)
+                const isVerifiedUniversity = await Verify(data.decryptedData, data.universitySignature, data.universitySignaturePublicKey)
+                const isVerified = isVerifiedStudent && isVerifiedUniversity
                 return { ...data, isVerified: isVerified };
             });
             const isVerifiedData = await Promise.all(isVerifiedPromises);
