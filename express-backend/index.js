@@ -10,7 +10,6 @@ app.use(express.json());
 const client = new MongoClient(uri)
 
 
-
 async function run() {
     try {
       // Connect to the MongoDB cluster
@@ -82,8 +81,26 @@ async function run() {
         }
       });
 
-      // Route to get user by publickey
-
+      app.post('/api/createUser', async (req, res) => {
+        try {
+          const newEntry = {
+            username: req.body.username,
+            type: req.body.type,
+            publicKey: req.body.publicKey,
+            signaturePublicKey: req.body.signaturePublicKey
+          };
+          const userExists = await usersCollection.findOne({username: newEntry.username})
+          if (userExists) {
+            res.status(400).send({message: 'User creation faled. User already exists'})
+            return
+          }
+          const result = await usersCollection.insertOne(newEntry);
+          res.json({message: 'success'});
+        } catch (error) {
+          console.error('Error inserting entry:', error);
+          res.status(500).send({ message: 'Internal Server Error' });
+        }
+      });
 
 
   

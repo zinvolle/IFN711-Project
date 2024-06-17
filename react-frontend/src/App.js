@@ -12,6 +12,7 @@ import EncryptAndDecrypt from './components/EncryptDecrypt';
 import ContractInformation from './components/contractInformation';
 import MongoUsers from './components/mongo';
 import Pinata from './components/PinataTest';
+import CreateUser from './components/CreateUser';
 
 
 
@@ -30,6 +31,7 @@ function App() {
           <Route path='/crypto' element = {<EncryptAndDecrypt />} />
           <Route path='/contract/information' element = {<ContractInformation/>}/>
           <Route path='/userfetchtest' element = {<MongoUsers/>}/>
+          <Route path='/createuser' element = {<CreateUser/>}/>
       </Routes>
     </BrowserRouter>
   );

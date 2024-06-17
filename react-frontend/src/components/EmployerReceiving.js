@@ -60,7 +60,6 @@ async function readEntries(contractAddress) {
         const contract = new web3.eth.Contract(ABI, contractAddress);
         const entries = await contract.methods.getEntries().call();
         const parsedData = entries.map(obj => JSON.parse(obj))
-        console.log(parsedData);
         return parsedData
 
     } catch (error) {

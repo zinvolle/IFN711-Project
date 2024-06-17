@@ -7,7 +7,7 @@ function Home() {
     return(
         <Container>
             <Navigation/>
-            <h1>Homepage</h1>
+            <h1>Home</h1>
                 
                 <Link to="/viewblocks">
                 <button class="btn btn-outline-primary">View Blocks</button>

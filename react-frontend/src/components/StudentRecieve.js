@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import {Container, ErrorMsg, Navigation} from './containers.js';
+import { FindUser } from '../MongoDB/MongoFunctions.js';
 
 const { Web3 } = require("web3");
 
@@ -45,19 +46,20 @@ async function getContractAddresses() {
     return contractAddresses;
 }
 //Main function that gets all student data for a specific employer key
-async function getAllStudentDataForStudent(studentPublicKey) {
+async function getAllStudentDataForStudent(_studentPublicKey) {
     try{
         const contractAddresses = await getContractAddresses() //get every single contract address on the block chain
-        const allStudentData = []
 
         for (const address of contractAddresses){ //iterate through every address
-            const data = await readEntries(address)
-            const studentData = data.filter(entry => entry.studentPublicKey == studentPublicKey); //filters out all of the employer public keys and finds one that matches
-            if (studentData.length > 0){
-                allStudentData.push(...studentData) //pushes all data that matches the employer public key into a new array
+            const contract = new web3.eth.Contract(ABI, address);
+            const studentPublicKey = await contract.methods.getPublicKey().call()
+            if (studentPublicKey == _studentPublicKey){
+                const studentSendTos = await contract.methods.getEntries().call()
+                const parsedStudentSendTos = studentSendTos.map(obj => JSON.parse(obj))
+                return parsedStudentSendTos
             }
         }
-        return allStudentData //returns the array of student data that matches the employer public key
+        return []
     } catch (error) {
         console.log(error)
     }
@@ -70,23 +72,30 @@ function Student(props){
     return (
         <div>
             <h4>Student</h4>
-            <p>encrypted data: {props.studentData.encryptedData}</p>
-            <p>signature: {props.studentData.signature}</p>
+            <p>encrypted data: {props.studentInfo.encryptedData}</p>
+            <p>signature: {props.studentInfo.signature}</p>
         </div>
     )
 }
 
 
 function StudentRecieve(){
-    const [studentPublicKey, setStudentPublicKey] = useState('')
+    const [studentID, setStudentID] = useState('')
     const [error, setError] = useState('')
-    const [studentData, setStudentData] = useState('')
+    const [studentInfo, setStudentInfo] = useState('')
     
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+          const studentData = await FindUser(studentID);
+          if (!studentData){
+            setError('student not found');
+            return
+          }
+          const studentPublicKey = studentData.publicKey
+          console.log(studentPublicKey)
           const data = await getAllStudentDataForStudent(studentPublicKey)
-          setStudentData(data)
+          setStudentInfo(data)
         } catch (error) {
           setError(error)
         }
@@ -102,17 +111,17 @@ function StudentRecieve(){
             <div className="row align-self-center w-75">
                 <h1 className="mb-5 font-weight-normal">Students Skills Data</h1>
                 <form onSubmit={handleSubmit}>
-                    <label className="h4 w-100">Public Key
-                        <input type="text" className="form-control" placeholder="Student Public Key" onChange={(e) => setStudentPublicKey(e.target.value)} required autoFocus />
+                    <label className="h4 w-100">Student ID
+                        <input type="text" className="form-control" placeholder="Student Unique Identifer" onChange={(e) => setStudentID(e.target.value)} required autoFocus />
                     </label>
                     <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Submit</button>
                 </form>
            </div>
-           {studentData && studentData.length > 0? (          
+           {studentInfo && studentInfo.length > 0? (          
                 <div>
-                <h3>For {studentData[0].employerPublicKey}</h3>
-                {studentData.map((data, index) => (
-                <Student key={index} studentData={data} />
+                <h3>For {studentID}</h3>
+                {studentInfo.map((data, index) => (
+                <Student key={index} studentInfo={data} />
             ))}
             </div>)
             : 
