@@ -1,35 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {Container, Navigation} from './containers.js';
+import { Container, Navigation } from './containers.js';
 
 //bunch of links to different endpoints in our website
 function Home() {
-    return(
-        <Container>
-            <Navigation/>
-            <h1>Home</h1>
-                
-                <Link to="/viewblocks">
-                <button class="btn btn-outline-primary">View Blocks</button>
+    return (
+        <div className='app-container'>
+            <div className='home-container'>
+                <h1 style={{fontSize:'60px'}}>Home</h1>
+
+                <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly', height:'300px'}}>
+                <Link to="/university/page">
+                    <button class="navigationButton">University</button>
                 </Link>
-                <Link to="/student/send">
-                <button class="btn btn-outline-primary">Send To Employer</button>
+                <Link to="/employer/page">
+                    <button class="navigationButton">Employer</button>
                 </Link>
-                <Link to="/student/receive">
-                <button class="btn btn-outline-primary">Student View</button>
+                <Link to="/student/page">
+                    <button class="navigationButton">Student</button>
                 </Link>
-                <Link to="/university/deploy">
-                <button class="btn btn-outline-primary">Deploy Contract</button>
-                </Link>
-                <Link to="/employer/dashboard">
-                <button class="btn btn-outline-primary">Employer View</button>
-                </Link>
-                <Link to="/contract/information">
-                <button class="btn btn-outline-primary">Contract Information</button>
-                </Link>
-            
-        
-        </Container>
+                </div>
+        </div>
+        </div>
     )
 }
 

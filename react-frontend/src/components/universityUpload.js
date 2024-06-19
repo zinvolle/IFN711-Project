@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256, Sign } from '../CryptoTools/CryptoTools';
-import {Container, ErrorMsg, Navigation} from './containers.js';
+import { Container, ErrorMsg, Navigation } from './containers.js';
 import { FindUser } from '../MongoDB/MongoFunctions';
 
 
@@ -20,19 +20,19 @@ const contract = new web3.eth.Contract(ABI);
 //deployment of Contract function
 async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature) {
   try {
-      const accounts = await web3.eth.getAccounts();
-      const mainAccount = accounts[0];
-      console.log("Default Account:", mainAccount);
-      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature] }).send({ from: mainAccount, gas: 4700000 });
-      console.log("Contract deployed at address:", deployedContract.options.address);
-      return deployedContract; 
+    const accounts = await web3.eth.getAccounts();
+    const mainAccount = accounts[0];
+    console.log("Default Account:", mainAccount);
+    const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature] }).send({ from: mainAccount, gas: 4700000 });
+    console.log("Contract deployed at address:", deployedContract.options.address);
+    return deployedContract;
   } catch (error) {
-      console.error("Error deploying contract:", error);
-      return(
-        <div>
-          Error: {error}
-        </div>
-      )
+    console.error("Error deploying contract:", error);
+    return (
+      <div>
+        Error: {error}
+      </div>
+    )
   }
 }
 
@@ -51,12 +51,12 @@ function UniversityUpload() {
     try {
       const studentData = await FindUser(studentIdentifer);
       if (studentData.error) {
-        setError('No data found for the given student identifier.');
-        return; 
+        setError('Error deploying: The student identifer does not exist');
+        return;
       }
       const uniData = await FindUser(universityIdentifier);
       if (uniData.error) {
-        setError('No data found for the given university identifier');
+        setError('Error deploying: The university identfier does not exist');
         return
       }
       const studentPublicKey = studentData.publicKey;
@@ -70,36 +70,36 @@ function UniversityUpload() {
       setError(error)
     }
   };
-  
+
   return (
-    <Container>
-      <Navigation>
-          <li class="breadcrumb-item">University</li>
-          <li class="breadcrumb-item active" aria-current="page">Deploy</li>
-      </Navigation>
-      <div className="align-self-center w-75"> 
-          <form onSubmit={handleSubmit}>
-            <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
-            <div style = {{flexDirection:'column', display:'flex'}}>
-              <label className="h5">Input University Unique Identifier
-                <input type="text" id="unipublickey" className="form-control" placeholder="University Unique Identifier" onChange={(e) => setUniversityIdentifier(e.target.value)} required autoFocus />
-              </label>
-              <label className="h5">Input University Signature Private Key
-                <input type="text" id="unipublickey" className="form-control" placeholder="University Private Signature Key" onChange={(e) => setUniversityPrivateSigKey(e.target.value)} required autoFocus />
-              </label>
-              <label className="h5">Input Student Unique Identifier
-                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />
-              </label>
-            </div>
-            <label className="h5 w-100">Input skills
-              <textarea type="text" id="studentskills" className="form-control" style={{height:"200px"}}  placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
-            </label>
-            <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Deploy</button>
-           
-          </form>
-          <ErrorMsg error={error} />
+
+    <div className='app-container'>
+      <div className='create-user-container'>
+        <form onSubmit={handleSubmit}>
+          <h1 >Deploy Student Skills</h1>
+          <div style={{ flexDirection: 'column', display: 'flex' }}>
+            <h3 style={{marginTop:'30px'}}>University Information</h3>
+            <hr className="horizontal-line" />
+              <h5>University Unique Identifier</h5>
+              <input style={{marginTop:'6px'}} type="text" placeholder="University Unique Identifier" onChange={(e) => setUniversityIdentifier(e.target.value)} required autoFocus />
+
+              <h5  style={{marginTop:'20px'}} >University Signature Private Key</h5>
+              <input  style={{marginTop:'6px'}} type="text"   placeholder="University Private Signature Key" onChange={(e) => setUniversityPrivateSigKey(e.target.value)} required autoFocus />
+              <h3 style={{marginTop:'30px'}}>Student Information</h3>
+              <hr className="horizontal-line" />
+              <h5>Student Unique Identifier</h5>
+              <input  style={{marginTop:'6px'}} type="text"  placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />   
+          
+              <h5  style={{marginTop:'20px'}} >Student skills</h5>
+            <textarea type="text"  style={{ height: "200px", marginTop:'6px'}} placeholder="Student Skills" onChange={(e) => setStudentSkills(e.target.value)} required />
+            {error? <p className='errorMessage' style={{marginTop:'10px'}}>{error}</p> : <p></p>}
+          <button className="submitButton" style={{marginTop:'30px', width:'200px', marginLeft:'90px'}} type="submit">Deploy</button>
+          </div>
+        </form>
+    
+
       </div>
-    </Container>
+    </div>
   );
 }
 

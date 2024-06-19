@@ -91,7 +91,7 @@ async function run() {
           };
           const userExists = await usersCollection.findOne({username: newEntry.username})
           if (userExists) {
-            res.status(400).send({message: 'User creation faled. User already exists'})
+            res.status(400).send({message: 'User creation failed. User already exists'})
             return
           }
           const result = await usersCollection.insertOne(newEntry);

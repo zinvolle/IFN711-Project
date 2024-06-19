@@ -2,11 +2,9 @@ import React from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
-
 import {Container, ErrorMsg, Navigation} from './containers.js';
-
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
-
+import '../styles/styles.css'
 
 const { Web3 } = require("web3");
 
@@ -58,40 +56,39 @@ function StudentSend() {
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
             const signature = await Sign(studentSkillsData, studentPrivateSignatureKey);
             await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey, encryptedSymmetricKey);
+
+            window.location.reload();
         } catch (error) {
             setError(error)
         }
     };
 
     return (
-        <Container>
-            <Navigation>
-                <li class="breadcrumb-item">Student</li>
-                <li class="breadcrumb-item active" aria-current="page">Deploy</li>
-            </Navigation>
-            <div className="row align-self-center w-75">
-                <form onSubmit={handleSubmit}>
-                    <h1 className="h3 mb-3 font-weight-normal">Send To Employer</h1>
-                    <label className="h5 w-100">Send To
-                        <input type="text" className="form-control" placeholder="Employer Unique Identifer" onChange={(e) => setEmployerUI(e.target.value)} required autoFocus />
-                    </label>
-                    <label className="h5 w-100">Your Contract Address
-                        <input type="text" className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />
-                    </label>
-                    <label className="h5 w-100">Your Private Signature Key
-                        <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
-                    </label>
-                    <label className="h5 w-50">Your skills data
-                        <textarea type="text" style={{ width: '100%', minHeight: '100px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
-                    </label>
-                    <div>
-                        <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Send</button>
-                    </div>
-                </form>
-            </div>
+        <div className='app-container'>
 
-            <ErrorMsg error={error} />
-        </Container>
+                <form className="create-user-container" onSubmit={handleSubmit}>
+                    <h1>Send To Employer</h1>
+                    <hr className="horizontal-line" />
+
+                    <label style={{fontSize:'20px'}}>Send To
+                        <input type="text" style={{marginTop:'10px'}} className="form-control" placeholder="Employer Unique Identifer" onChange={(e) => setEmployerUI(e.target.value)} required autoFocus />
+                    </label>
+                    <label style={{marginTop:'15px', fontSize:'20px'}} >Your Contract Address
+                        <input type="text" style={{marginTop:'10px'}} className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />
+                    </label>
+                    <label style={{marginTop:'15px', fontSize:'20px'}}  >Your Private Signature Key
+                        <input type="text" style={{marginTop:'10px'}} className="form-control" placeholder="Private Signature Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
+                    </label>
+                    <label style={{marginTop:'15px', fontSize:'20px'}}  >Your skills data
+                        <textarea type="text" style={{ width: '100%', minHeight: '100px', marginTop:'10px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
+                    </label>
+                  
+                        <button className="submitButton" style={{marginTop:'30px'}}  type="submit">Send</button>
+                 </form>
+
+
+            {error? <p className='errorMessage' style={{marginTop:'10px'}}>{error}</p> : <p></p>}
+            </div>
     )
 }
 
