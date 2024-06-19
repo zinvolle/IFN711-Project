@@ -65,7 +65,7 @@ function ViewBlocks(){
 
     return (
 
-<div className="app-container">
+        <Container>
 
             
         {
@@ -78,7 +78,7 @@ function ViewBlocks(){
             )
         }
 
-</div>
+        </Container>
     )
 }
 

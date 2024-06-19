@@ -10,6 +10,9 @@ function Home() {
                 <h1 style={{fontSize:'60px'}}>Home</h1>
 
                 <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly', height:'300px'}}>
+                <Link to="/createuser">
+                    <button class="navigationButton">Create User</button>
+                </Link>
                 <Link to="/university/page">
                     <button class="navigationButton">University</button>
                 </Link>
@@ -19,18 +22,6 @@ function Home() {
                 <Link to="/student/page">
                     <button class="navigationButton">Student</button>
                 </Link>
-                <div>
-                    <h4> Dev Testing </h4>
-                    <Link to="/crypto">
-                    <button class="mx-1 btn btn-outline-primary">Crypto Example</button>
-                    </Link>
-                    <Link to="/pinata">
-                    <button class="mx-1 btn btn-outline-primary">Pinata Test</button>
-                    </Link>
-                    <Link to="/userfetchtest">
-                    <button class="mx-1 btn btn-outline-primary">User Fetch Test</button>
-                    </Link>
-                </div>
                 </div>
             </div>
         </div>

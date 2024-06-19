@@ -19,9 +19,6 @@ function UniversityPage() {
                 <Link to="/contract/information">
                     <button class="navigationButton" style={{fontSize:'26px'}}>Contract Information</button>
                 </Link>
-                <Link to="/createuser">
-                    <button class="navigationButton">Create User</button>
-                </Link>
                 </div>
             </div>
         </div>
