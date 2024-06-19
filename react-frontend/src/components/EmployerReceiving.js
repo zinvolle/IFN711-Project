@@ -4,7 +4,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { Encrypt, Decrypt, Sign, Verify, DecryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 import AuthenticateData from './hashing.js'
 
-import {Container, ErrorMsg, Navigation} from './containers.js';
+import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 
@@ -92,12 +92,12 @@ async function getContractAddresses() {
 function Student({ studentData }) {
     return (
         <div class='border border-dark m-1 p-1'>
-            <h4>Student: {studentData.SUI}</h4>
-            <p>encrypted data: {studentData.encryptedData}</p>
-            <p>decryped data: {studentData.decryptedData}</p>
-            <p class="text-break">signature: {studentData.signature}</p>
-            <p>is Verified: {JSON.stringify(studentData.isVerified)}</p>
-            <p>Hash Compare Result: {JSON.stringify(studentData.hashCompareResult)}</p>
+            <h4>Student UID: {studentData.SUI}</h4>
+            <p><b>Encrypted Data:</b> {studentData.encryptedData}
+                <br /><b>Decryped Data:</b> {studentData.decryptedData}</p>
+            <p class="text-break"><b>Student Signature:</b> {studentData.signature}</p>
+            <p><b>Data is Verified?:</b> {JSON.stringify(studentData.isVerified)}
+                <br /><b>Hash Compare Result:</b> {JSON.stringify(studentData.hashCompareResult)}</p>
         </div>
     )
 }
@@ -106,22 +106,31 @@ function Student({ studentData }) {
 function EmployerPage() {
     const [employerPrivateKey, setEmployerPrivateKey] = useState('')
     const [error, setError] = useState('')
+    const [message, setMessage] = useState('')
     const [studentData, setStudentData] = useState('')
     const [EUI, setEUI] = useState(''); //EUI stands for Employer Unique Identifier
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            setStudentData('')
+            setError('')
+            setMessage('')
+            
             const employerData = await FindUser(EUI);
             if (employerData.error || employerData.type != 'employer'){
                 setError('No such employer exists')
-                setStudentData('')
                 return
             }
             setError(null)
             const employerPublicKey = employerData.publicKey
             const data = await getAllStudentDataForEmployer(employerPublicKey)
-            setStudentData(data)
+            if (data.length > 0){
+                setStudentData(data);
+            }
+            else {
+                setMessage('No Data found for this Employee UID.')
+            }
         } catch (error) {
             setError(error)
         }
@@ -210,6 +219,7 @@ function EmployerPage() {
                     <button className="btn btn-primary btn-block" onClick={startHashComparison}>Compare All </button>
                 </div>
             </div>
+            <UserMsg message={message} />
             <ErrorMsg error={error} />
             {studentData && studentData.length > 0 ? (
                 <div className='align-self-center w-75'>

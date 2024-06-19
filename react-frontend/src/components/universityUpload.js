@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256, Sign } from '../CryptoTools/CryptoTools';
-import {Container, ErrorMsg, Navigation} from './containers.js';
+import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 import { FindUser } from '../MongoDB/MongoFunctions';
 
 
@@ -41,6 +41,7 @@ function UniversityUpload() {
   const [studentPublicKey, setStudentPublicKey] = useState('')
   const [studentSkills, setStudentSkills] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [studentSignaturePublicKey, setStudentSignaturePublicKey] = useState('')
   const [studentIdentifer, setStudentIdentifier] = useState('');
   const [universityIdentifier, setUniversityIdentifier] = useState('');
@@ -51,12 +52,12 @@ function UniversityUpload() {
     try {
       const studentData = await FindUser(studentIdentifer);
       if (studentData.error) {
-        setError('No data found for the given student identifier.');
+        setError('No data found for the Student Identifier.');
         return; 
       }
       const uniData = await FindUser(universityIdentifier);
       if (uniData.error) {
-        setError('No data found for the given university identifier');
+        setError('No data found for the University Identifier');
         return
       }
       const studentPublicKey = studentData.publicKey;
@@ -65,10 +66,14 @@ function UniversityUpload() {
       const universitySignature = await Sign(studentSkills, universityPrivateSigKey);
       const hashedStudentSkills = await HashDataSHA256(studentSkills)
       await deployContract(studentPublicKey, hashedStudentSkills, studentSignatureKey, universitySignatureKey, universitySignature);
-      window.location.reload();
+      //window.location.reload();
+      setError('');
+      setSuccess('Successfully Deployed Skills to Blockchain.');
     } catch (error) {
-      setError(error)
+      setSuccess('');
+      setError(error);
     }
+
   };
   
   return (
@@ -97,6 +102,7 @@ function UniversityUpload() {
             <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Deploy</button>
            
           </form>
+          <UserMsg message={success} />
           <ErrorMsg error={error} />
       </div>
     </Container>

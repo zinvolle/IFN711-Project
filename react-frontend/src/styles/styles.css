@@ -1,9 +1,9 @@
 .create-user-container {
-    background-color: #2d2121; /* Dark background color */
+    background-color: white; /* Dark background color */
     align-self: center;
     display: flex;
     flex-direction: column;
-    color: #fff; /* Light text color */
+    color: black; /* Light text color */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -12,7 +12,7 @@
 }
 
 .app-container {
-    background-color: #262758; /* Dark background color */
+    background-color: AntiqueWhite; /* Dark background color */
     min-height: 100vh; /* Minimum height of viewport */
     display: flex;
     justify-content: center;
@@ -102,12 +102,12 @@ border-color: #0927e8; /* Highlight border color on hover and focus */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     text-align: center;
-    background-color: #11125c; /* Dark background color */
+    background-color: white; /* Dark background color */
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Align content to the top */
     align-items: center;
-    color: #fff; /* Light text color */
+    color: black; /* Light text color */
     max-width: 600px; /* Maximum width of the popup */
     max-height: 80vh;
     overflow-y: auto;

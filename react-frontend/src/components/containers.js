@@ -28,10 +28,21 @@ const ErrorMsg = ({error}) => {
     return(
         <div>
             {error ?
-                <h2>error: {error}</h2> : <div></div>
+                <div class="alert alert-danger" role="alert"><b>ERROR:</b> {error}</div> : <div></div>
             }
         </div>
     );
 };
 
-export {Container, ErrorMsg, Navigation};
+const UserMsg = ({message}) => {
+    
+    return(
+        <div>
+            {message ?
+                <div class="alert alert-primary" role="alert">{message}</div> : <div></div>
+            }
+        </div>
+    );
+};
+
+export {Container, ErrorMsg, UserMsg, Navigation};

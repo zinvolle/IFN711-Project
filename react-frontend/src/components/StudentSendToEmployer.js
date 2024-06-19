@@ -3,7 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { useState, useEffect } from 'react';
 import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
 
-import {Container, ErrorMsg, Navigation} from './containers.js';
+import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
 
@@ -41,23 +41,27 @@ function StudentSend() {
     const [studentSkillsData, setStudentSkillsData] = useState('')
     const [contractAddress, setContractAddress] = useState('')
     const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
     const [employerUI, setEmployerUI] = useState('')
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const employerData = await FindUser(employerUI);
+            setSuccess('')
+            setError('')
             if (employerData.error || employerData.type != 'employer'){
                 setError('No such employer exists')
                 return
             }
-            setError(null)
+
             const employerPublicKey = employerData.publicKey
             const symmetricKey = await GenerateSymmetricKey();
             const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkillsData);
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
             const signature = await Sign(studentSkillsData, studentPrivateSignatureKey);
             await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey, encryptedSymmetricKey);
+            setSuccess('Successfully Sent Skills to Employer.')
         } catch (error) {
             setError(error)
         }
@@ -89,7 +93,7 @@ function StudentSend() {
                     </div>
                 </form>
             </div>
-
+            <UserMsg message={success} />
             <ErrorMsg error={error} />
         </Container>
     )
