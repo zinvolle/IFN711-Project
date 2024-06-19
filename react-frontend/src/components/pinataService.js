@@ -17,7 +17,7 @@ export async function UploadToIPFS(_data, _publicKey, _OldCID = null) {
             // create JSON of data to upload
             pinataContent: {
                 skillsData: _data.skillsData,
-                encrpytionKey: _data.encryptionKey
+                encryptionKey: _data.encryptionKey
             },
             // name the data the hash of the public key
             pinataMetadata: {

@@ -3,7 +3,7 @@ import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.
 import { HashDataSHA256, Sign } from '../CryptoTools/CryptoTools';
 import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 import { FindUser } from '../MongoDB/MongoFunctions';
-
+import { UploadToIPFS, DownloadFromIPFS } from './pinataService.js';
 
 const { Web3 } = require("web3");
 
@@ -46,7 +46,8 @@ function UniversityUpload() {
   const [studentIdentifer, setStudentIdentifier] = useState('');
   const [universityIdentifier, setUniversityIdentifier] = useState('');
   const [universityPrivateSigKey, setUniversityPrivateSigKey] = useState('');
-
+  const [CID, setCID] = useState('');
+    
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -63,9 +64,20 @@ function UniversityUpload() {
       const studentPublicKey = studentData.publicKey;
       const studentSignatureKey = studentData.signaturePublicKey;
       const universitySignatureKey = uniData.signaturePublicKey;
+
       const universitySignature = await Sign(studentSkills, universityPrivateSigKey);
       const hashedStudentSkills = await HashDataSHA256(studentSkills)
+
       await deployContract(studentPublicKey, hashedStudentSkills, studentSignatureKey, universitySignatureKey, universitySignature);
+
+      const studentJSON = {
+        skillsData: studentSkills,
+        encryptionKey: studentPublicKey
+      };
+      //Send Skills to IPFS Pinata
+      console.log('Attempting to pin: ' + JSON.stringify(studentJSON));
+      setCID( await UploadToIPFS(studentJSON, studentSignatureKey))
+
       //window.location.reload();
       setError('');
       setSuccess('Successfully Deployed Skills to Blockchain.');
@@ -93,7 +105,7 @@ function UniversityUpload() {
                 <input type="text" id="unipublickey" className="form-control" placeholder="University Private Signature Key" onChange={(e) => setUniversityPrivateSigKey(e.target.value)} required autoFocus />
               </label>
               <label className="h5">Input Student Unique Identifier
-                <input type="text" id="studentpublickey" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />
+                <input type="text" id="studentuid" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentIdentifier(e.target.value)} required autoFocus />
               </label>
             </div>
             <label className="h5 w-100">Input skills
