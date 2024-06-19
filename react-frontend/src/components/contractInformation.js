@@ -92,10 +92,7 @@ function ContractInformation() {
 
 
     return (
-        <Container>
-            <Navigation>
-                <li class="breadcrumb-item active" aria-current="page">Contract Information</li>
-            </Navigation>
+<div className="app-container">
             <div className="row align-self-center w-75">
                 <h1>Contract Information</h1>
                 <div className="input-group mb-5">
@@ -120,7 +117,7 @@ function ContractInformation() {
                         <p>Hashed Data: {authentic.toString()}</p>
                 </div>
             </div>
-        </Container>
+            </div>
     )
 }
 

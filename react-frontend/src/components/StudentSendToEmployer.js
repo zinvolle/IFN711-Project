@@ -6,7 +6,7 @@ import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmet
 import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
-
+import '../styles/styles.css'
 
 const { Web3 } = require("web3");
 

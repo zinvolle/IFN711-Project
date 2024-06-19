@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { HashDataSHA256, Sign } from '../CryptoTools/CryptoTools';
 import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
@@ -20,19 +20,19 @@ const contract = new web3.eth.Contract(ABI);
 //deployment of Contract function
 async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature) {
   try {
-      const accounts = await web3.eth.getAccounts();
-      const mainAccount = accounts[0];
-      console.log("Default Account:", mainAccount);
-      const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey,_hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature] }).send({ from: mainAccount, gas: 4700000 });
-      console.log("Contract deployed at address:", deployedContract.options.address);
-      return deployedContract; 
+    const accounts = await web3.eth.getAccounts();
+    const mainAccount = accounts[0];
+    console.log("Default Account:", mainAccount);
+    const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature] }).send({ from: mainAccount, gas: 4700000 });
+    console.log("Contract deployed at address:", deployedContract.options.address);
+    return deployedContract;
   } catch (error) {
-      console.error("Error deploying contract:", error);
-      return(
-        <div>
-          Error: {error}
-        </div>
-      )
+    console.error("Error deploying contract:", error);
+    return (
+      <div>
+        Error: {error}
+      </div>
+    )
   }
 }
 
@@ -75,7 +75,7 @@ function UniversityUpload() {
     }
 
   };
-  
+
   return (
     <Container>
       <Navigation>

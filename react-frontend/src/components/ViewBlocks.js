@@ -64,12 +64,9 @@ function ViewBlocks(){
     }, []);
 
     return (
-        <Container>
 
-            <Navigation>
-                <li class="breadcrumb-item active" aria-current="page">View Blocks</li>
-            </Navigation>
-        <div className='container'>
+<div className="app-container">
+
             
         {
             errorMessage ? (
@@ -80,8 +77,8 @@ function ViewBlocks(){
                 ))
             )
         }
-        </div>
-        </Container>
+
+</div>
     )
 }
 

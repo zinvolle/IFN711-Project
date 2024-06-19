@@ -4,16 +4,19 @@ import UniversityUpload from './components/universityUpload';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/Home'
 import StudentSend from './components/StudentSendToEmployer';
-import StudentRecieve from './components/StudentRecieve';
+import StudentRecieve from './components/StudentViewID';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ViewBlocks from './components/ViewBlocks';
-import EmployerPage from './components/EmployerReceiving';
+import EmployerView from './components/EmployerView';
 import EncryptAndDecrypt from './components/EncryptDecrypt';
 import ContractInformation from './components/contractInformation';
 import MongoUsers from './components/mongo';
 import Pinata from './components/PinataTest';
 import CreateUser from './components/CreateUser';
-
+import EmployerLogin from './components/EmployerLogin';
+import StudentPage from './components/StudentPage';
+import EmployerPage from './components/EmployerPage';
+import UniversityPage from './components/UniversityPage';
 
 
 function App() {
@@ -27,11 +30,15 @@ function App() {
           <Route path="/student/send" element = {<StudentSend />} />
           <Route path="/student/receive" element = {<StudentRecieve />} />
           <Route path='viewblocks' element = {<ViewBlocks/>} />
-          <Route path='/employer/dashboard' element = {<EmployerPage />} />
+          <Route path='/employer/login' element = {<EmployerLogin />} />
           <Route path='/crypto' element = {<EncryptAndDecrypt />} />
           <Route path='/contract/information' element = {<ContractInformation/>}/>
           <Route path='/userfetchtest' element = {<MongoUsers/>}/>
           <Route path='/createuser' element = {<CreateUser/>}/>
+          <Route path='/employer/view' element = {<EmployerView/>}/>
+          <Route path='/student/page' element = {<StudentPage/>}/>
+          <Route path='/employer/page' element = {<EmployerPage/>}/>
+          <Route path='/university/page' element = {<UniversityPage/>}/>
       </Routes>
     </BrowserRouter>
   );

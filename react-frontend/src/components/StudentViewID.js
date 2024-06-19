@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import {Container, ErrorMsg, Navigation} from './containers.js';
+import { Container, ErrorMsg, Navigation } from './containers.js';
 import { FindUser } from '../MongoDB/MongoFunctions.js';
 
 const { Web3 } = require("web3");
@@ -19,7 +19,7 @@ async function readEntries(contractAddress) {
         const parsedData = entries.map(obj => JSON.parse(obj))
         console.log(parsedData);
         return parsedData
-        
+
     } catch (error) {
         console.log(error);
     }
@@ -47,13 +47,13 @@ async function getContractAddresses() {
 }
 //Main function that gets all student data for a specific employer key
 async function getAllStudentDataForStudent(_studentPublicKey) {
-    try{
+    try {
         const contractAddresses = await getContractAddresses() //get every single contract address on the block chain
 
-        for (const address of contractAddresses){ //iterate through every address
+        for (const address of contractAddresses) { //iterate through every address
             const contract = new web3.eth.Contract(ABI, address);
             const studentPublicKey = await contract.methods.getPublicKey().call()
-            if (studentPublicKey == _studentPublicKey){
+            if (studentPublicKey == _studentPublicKey) {
                 const studentSendTos = await contract.methods.getEntries().call()
                 const parsedStudentSendTos = studentSendTos.map(obj => JSON.parse(obj))
                 return parsedStudentSendTos
@@ -68,7 +68,7 @@ async function getAllStudentDataForStudent(_studentPublicKey) {
 
 
 //simple student componenent that gets rendered on the screen
-function Student(props){
+function Student(props) {
     return (
         <div>
             <h4>Student</h4>
@@ -79,56 +79,47 @@ function Student(props){
 }
 
 
-function StudentRecieve(){
+function StudentRecieve() {
     const [studentID, setStudentID] = useState('')
     const [error, setError] = useState('')
     const [studentInfo, setStudentInfo] = useState('')
-    
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-          const studentData = await FindUser(studentID);
-          if (!studentData){
-            setError('student not found');
-            return
-          }
-          const studentPublicKey = studentData.publicKey
-          console.log(studentPublicKey)
-          const data = await getAllStudentDataForStudent(studentPublicKey)
-          setStudentInfo(data)
+            const studentData = await FindUser(studentID);
+            if (!studentData) {
+                setError('student not found');
+                return
+            }
+            const studentPublicKey = studentData.publicKey
+            console.log(studentPublicKey)
+            const data = await getAllStudentDataForStudent(studentPublicKey)
+            setStudentInfo(data)
         } catch (error) {
-          setError(error)
+            setError(error)
         }
-      };
+    };
 
     //the actual web page being rendered under here
-    return(
-        <Container>
-            <Navigation>
-                <li class="breadcrumb-item">Student</li>
-                <li class="breadcrumb-item active" aria-current="page">Recieving</li>
-            </Navigation>
-            <div className="row align-self-center w-75">
-                <h1 className="mb-5 font-weight-normal">Students Skills Data</h1>
-                <form onSubmit={handleSubmit}>
-                    <label className="h4 w-100">Student ID
-                        <input type="text" className="form-control" placeholder="Student Unique Identifer" onChange={(e) => setStudentID(e.target.value)} required autoFocus />
-                    </label>
-                    <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Submit</button>
-                </form>
-           </div>
-           {studentInfo && studentInfo.length > 0? (          
-                <div>
-                <h3>For {studentID}</h3>
-                {studentInfo.map((data, index) => (
-                <Student key={index} studentInfo={data} />
-            ))}
-            </div>)
-            : 
-            <h4>No Data to show</h4>
-            } 
-            <ErrorMsg error={error} />
-        </Container>
+    return (
+        <div className='app-container'>
+            <div>
+  
+                   
+                    <form className='create-user-container' onSubmit={handleSubmit}>
+                    <h1 >Students Skills Data</h1>
+                    <hr className="horizontal-line" />
+                        <label style={{fontSize:'28px'}}>Student ID
+                            
+                            <input type="text" className="form-control" placeholder="Student Unique Identifer"  style= {{marginTop:'10px'}} onChange={(e) => setStudentID(e.target.value)} required autoFocus />
+                        </label>
+                        <button className="submitButton" style= {{marginTop:'40px', width:'150px', alignSelf:'center'}} type="submit">Submit</button>
+                    </form>
+        
+            </div>
+        </div>
+
     )
 }
 

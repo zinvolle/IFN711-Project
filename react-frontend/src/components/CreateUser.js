@@ -92,7 +92,7 @@ function UserCreation() {
                     <p>{privateKey}</p>
                     <p>Signature Private Key:</p>
                     <p>{signaturePrivateKey}</p>
-                    <button className='submitButton' onClick={handlePopupClose}>I have saved BOTH Private and Public Keys</button>
+                    <button className='submitButton' onClick={handlePopupClose}>I have saved BOTH Private Keys</button>
                 </div>
             </div>
         </div>
