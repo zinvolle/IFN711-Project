@@ -2,9 +2,9 @@ import React from "react";
 
 const Navigation = ({children}) => {
     return(
-        <nav class="navbar bg-light align-items-center justify-content-center fixed-top" aria-label="breadcrumb">
+        <nav class="navbar bg-secondary align-items-center justify-content-center fixed-top" aria-label="breadcrumb">
         <ol class="breadcrumb mb-1">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a className = "link-light" href="/">Home</a></li>
             {children}
         </ol>
         </nav>

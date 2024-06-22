@@ -104,6 +104,10 @@ function StudentRecieve() {
     //the actual web page being rendered under here
     return (
         <div className='app-container'>
+            <Navigation>
+                <li class="breadcrumb-item"><a className = "link-light" href="/student/page">Student</a></li>
+                <li class="breadcrumb-item" aria-current="page">Skills Data</li>
+            </Navigation>
             <div>
   
                    

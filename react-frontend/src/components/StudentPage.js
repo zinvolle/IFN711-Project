@@ -6,6 +6,9 @@ import { Container, Navigation } from './containers.js';
 function StudentPage() {
     return (
         <div className='app-container'>
+            <Navigation>
+                <li class="breadcrumb-item" aria-current="page">Student</li>
+            </Navigation>
             <div className='home-container'>
             <h1 style={{fontSize:'60px'}}>Student Page</h1>
 

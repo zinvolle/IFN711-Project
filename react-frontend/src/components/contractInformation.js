@@ -92,8 +92,11 @@ function ContractInformation() {
 
 
     return (
-<div className="app-container">
-            <div className="row align-self-center w-75">
+        <div className="app-container">
+            <Navigation>
+            <li class="breadcrumb-item" aria-current="page">Contract Information</li>
+            </Navigation>
+            <div className="view-container">
                 <h1>Contract Information</h1>
                 <div className="input-group mb-5">
                     <input className="form-control" placeholder="contract address" onChange={(e) => setContractAddress(e.target.value)}></input>
@@ -117,7 +120,7 @@ function ContractInformation() {
                         <p>Hashed Data: {authentic.toString()}</p>
                 </div>
             </div>
-            </div>
+        </div>
     )
 }
 

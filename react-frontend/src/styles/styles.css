@@ -1,9 +1,9 @@
 .create-user-container {
-    background-color: white; /* Dark background color */
+    background-color: darkslateblue; /* Dark background color */
     align-self: center;
     display: flex;
     flex-direction: column;
-    color: black; /* Light text color */
+    color: white; /* Light text color */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -14,7 +14,7 @@
 }
 
 .app-container {
-    background-color: AntiqueWhite;
+    background-color: slategray;
     min-height: 100vh; /* Minimum height of viewport */
     display: flex;
     flex-direction: column;
@@ -23,7 +23,7 @@
     color: #fff; /* Light text color */
 }
 .home-container{
-  background-color: #1011256f;
+  background-color: darkslateblue;
   padding: 40px;
   height: 600px;
   min-width: 500px;
@@ -35,6 +35,22 @@
   justify-content: space-around;
   text-align: center;
   align-items:center;
+}
+
+.view-container {
+  background-color: darkslateblue;
+  padding: 40px;
+  min-height: 600px;
+  height: auto;
+  display: flex;
+  color:#fff;
+  min-width: 800px;
+  width: auto;
+  border-radius: 10px;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
 }
 
 .dashboard-container {
@@ -105,7 +121,7 @@ border-color: #0927e8; /* Highlight border color on hover and focus */
     cursor: pointer; /* Changes cursor to pointer on hover */
     border: none; /* Removes default border */
     border-radius: 4px; /* Rounded corners */
-    background-color: #0056b3; /* Default button color */
+    background-color: indigo; /* Default button color */
     color: #fff; /* Text color */
     transition: background-color 0.3s ease; /* Smooth transition for background color */
 
@@ -114,7 +130,7 @@ border-color: #0927e8; /* Highlight border color on hover and focus */
   /* Hover and focus effects */
   .submitButton:hover,
   .submitButton:focus {
-    background-color: #262758; /* Darker background color on hover/focus */
+    background-color: indigo; /* Darker background color on hover/focus */
   }
 
   .navigationButton {
@@ -128,7 +144,7 @@ border-color: #0927e8; /* Highlight border color on hover and focus */
     border: none; /* Removes default border */
     border-radius: 4px; /* Rounded corners */
     width: 300px;
-    background-color: #4d0694; /* Default button color */
+    background-color: indigo; /* Default button color */
     color: #fff; /* Text color */
     transition: background-color 0.3s ease; /* Smooth transition for background color */
 

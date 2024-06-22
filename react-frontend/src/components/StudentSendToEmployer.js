@@ -68,10 +68,11 @@ function StudentSend() {
     };
 
     return (
-        <Container>
+        <div className="app-container">
+            <div className='home-container'>
             <Navigation>
-                <li class="breadcrumb-item">Student</li>
-                <li class="breadcrumb-item active" aria-current="page">Deploy</li>
+                <li class="breadcrumb-item"><a className = "link-light" href="/student/page">Student</a></li>
+                <li class="breadcrumb-item" aria-current="page">Deploy</li>
             </Navigation>
             <div className="row align-self-center w-75">
                 <form onSubmit={handleSubmit}>
@@ -89,13 +90,14 @@ function StudentSend() {
                         <textarea type="text" style={{ width: '100%', minHeight: '100px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
                     </label>
                     <div>
-                        <button className="btn btn-lg btn-primary btn-block m-3" type="submit">Send</button>
+                        <button className="btn btn-lg btn-dark btn-block m-3" type="submit">Send</button>
                     </div>
                 </form>
             </div>
             <UserMsg message={success} />
             <ErrorMsg error={error} />
-        </Container>
+            </div>
+        </div>
     )
 }
 

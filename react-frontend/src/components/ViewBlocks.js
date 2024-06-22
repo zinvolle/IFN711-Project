@@ -11,7 +11,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 function Block( {block} ){
     return (
         <div className='block row border border-dark m-1' >
-            <div class='col pt-3'>
+            <div class='col pt-3 bg-white text-dark'>
                 <h5>Block Number: {block.blockNumber}</h5>
                 <p>Block hash: {block.blockHash}</p>
                 <p>Created Contract Address: {block.contractAddress}</p>            
@@ -65,20 +65,23 @@ function ViewBlocks(){
 
     return (
 
-        <Container>
-
+        <div className="app-container">
+            <Navigation>
+                <li class="breadcrumb-item" aria-current="page">View Blocks</li>
+            </Navigation>
+            <div className="view-container">
             
-        {
-            errorMessage ? (
-                <ErrorMsg error={errorMessage} />
-            ) : (
-                blocks.map((block, index) => (
-                    <Block key={index} block={block} />
-                ))
-            )
-        }
-
-        </Container>
+            {
+                errorMessage ? (
+                    <ErrorMsg error={errorMessage} />
+                ) : (
+                    blocks.map((block, index) => (
+                        <Block key={index} block={block} />
+                    ))
+                )
+            }
+            </div>
+        </div>
     )
 }
 

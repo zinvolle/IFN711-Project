@@ -7,7 +7,7 @@ function Home() {
     return (
         <div className='app-container'>
             <div className='home-container'>
-                <h1 style={{fontSize:'60px'}}>Home</h1>
+                <h1 style={{fontSize:'60px'}}>Homepage</h1>
 
                 <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly', height:'300px'}}>
                 <Link to="/createuser">

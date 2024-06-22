@@ -89,12 +89,12 @@ function UniversityUpload() {
   };
 
   return (
-    <Container>
+    <div className='app-container'>
       <Navigation>
-          <li class="breadcrumb-item">University</li>
-          <li class="breadcrumb-item active" aria-current="page">Deploy</li>
+          <li class="breadcrumb-item"><a className = "link-light" href="/university/page">University</a></li>
+          <li class="breadcrumb-item" aria-current="page">Deploy</li>
       </Navigation>
-      <div className="align-self-center w-75"> 
+      <div className="view-container"> 
           <form onSubmit={handleSubmit}>
             <h1 className="h3 mb-3 font-weight-normal">Deploy Student Skills onto the Blockchain</h1>
             <div style = {{flexDirection:'column', display:'flex'}}>
@@ -117,7 +117,7 @@ function UniversityUpload() {
           <UserMsg message={success} />
           <ErrorMsg error={error} />
       </div>
-    </Container>
+    </div>
   );
 }
 
