@@ -6,8 +6,8 @@ import AuthenticateData from './hashing.js'
 import { Container, ErrorMsg, Navigation } from './containers.js';
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions.js';
 import { useLocation } from 'react-router-dom';
-//import UisCheckCircle from '@iconscout/react-unicons/icons/uil-check-circle.js';
-//import  UisExclamationCircle from '@iconscout/react-unicons/icons/uil-exclamation-circle.js'
+import UisCheckCircle from '@iconscout/react-unicons/icons/uil-check-circle.js';
+import UisExclamationCircle from '@iconscout/react-unicons/icons/uil-exclamation-circle.js'
 import '../styles/styles.css'
 
 const { Web3 } = require("web3");
@@ -103,13 +103,17 @@ function Student({ studentData }) {
                     style={{ position: 'relative', display: 'inline-block' }}
                 >
                     {studentData.isVerified ? (
-                        //<UisCheckCircle size='30' color='green' />
-                        <i className='bi bi-check-circle text-success'/>
+                        <div>
+                            <UisCheckCircle size='30' color='green' />
+                            <i className='bi bi-check-circle text-success' />
+                        </div>
                     ) : (
-                        //<UisExclamationCircle size='30' color='red' />
-                        <i className='bi bi-exclamation-circle text-danger'/>
+                        <div>
+                            <UisExclamationCircle size='30' color='red' />
+                            <i className='bi bi-exclamation-circle text-danger' />
+                        </div>
                     )}
-                     {showTooltip && (
+                    {showTooltip && (
                         <div className="tooltip-container">
                             <span>{studentData.isVerified && studentData.hashCompareResult ? 'Valid' : 'Invalid'}</span>
                         </div>
@@ -181,7 +185,7 @@ function EmployerView() {
     }
 
     return (
-        <Container>
+        <div className='dashboard-container'>
             <h1 style={{ marginTop: '30px', fontSize: '60px' }}>Employer Dashboard</h1>
             <div className='dashboard-text-container' style={{ marginTop: '40px' }}>
                 <p style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '10px' }}>Employer Unique Identifier:</p>
@@ -193,7 +197,7 @@ function EmployerView() {
                     <Student key={index} studentData={student} />
                 ))}
             </div>
-        </Container>
+        </div>
     );
 };
 

@@ -4,6 +4,7 @@ import { HashDataSHA256, Sign } from '../CryptoTools/CryptoTools';
 import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 import { FindUser } from '../MongoDB/MongoFunctions';
 import { UploadToIPFS, DownloadFromIPFS } from './pinataService.js';
+import { GenerateSymmetricKey, Encrypt, EncryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 
 const { Web3 } = require("web3");
 
@@ -18,12 +19,12 @@ const contract = new web3.eth.Contract(ABI);
 
 
 //deployment of Contract function
-async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature) {
+async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature, _CID) {
   try {
     const accounts = await web3.eth.getAccounts();
     const mainAccount = accounts[0];
     console.log("Default Account:", mainAccount);
-    const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature] }).send({ from: mainAccount, gas: 4700000 });
+    const deployedContract = await contract.deploy({ data: bytecode, arguments: [_studentPublicKey, _hashedStudentSkills, _studentSignaturePublicKey, _universitySignatureKey, _universitySignature, _CID] }).send({ from: mainAccount, gas: 4700000 });
     console.log("Contract deployed at address:", deployedContract.options.address);
     return deployedContract;
   } catch (error) {
@@ -46,8 +47,7 @@ function UniversityUpload() {
   const [studentIdentifer, setStudentIdentifier] = useState('');
   const [universityIdentifier, setUniversityIdentifier] = useState('');
   const [universityPrivateSigKey, setUniversityPrivateSigKey] = useState('');
-  const [CID, setCID] = useState('');
-    
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -68,22 +68,28 @@ function UniversityUpload() {
       const universitySignature = await Sign(studentSkills, universityPrivateSigKey);
       const hashedStudentSkills = await HashDataSHA256(studentSkills)
 
-      await deployContract(studentPublicKey, hashedStudentSkills, studentSignatureKey, universitySignatureKey, universitySignature);
-
+      
+     
+     //Encryption of Data
+      const symmetricKey = await GenerateSymmetricKey();
+      const encryptedSkills = await EncryptWithSymmetricKey(symmetricKey, studentSkills);
+      const encryptedSymmetricKey = await Encrypt(symmetricKey, studentPublicKey);
+     
       const studentJSON = {
-        skillsData: studentSkills,
-        encryptionKey: studentPublicKey
+        skillsData: encryptedSkills,
+        encryptionKey: encryptedSymmetricKey
       };
-      //Send Skills to IPFS Pinata
+      // Send Skills to IPFS Pinata
       console.log('Attempting to pin: ' + JSON.stringify(studentJSON));
-      setCID( await UploadToIPFS(studentJSON, studentSignatureKey))
+      const CID = await UploadToIPFS(studentJSON, studentSignatureKey);
 
+      await deployContract(studentPublicKey, hashedStudentSkills, studentSignatureKey, universitySignatureKey, universitySignature, CID);
       //window.location.reload();
       setError('');
       setSuccess('Successfully Deployed Skills to Blockchain.');
     } catch (error) {
       setSuccess('');
-      setError(error);
+      setError(error.message);
     }
 
   };

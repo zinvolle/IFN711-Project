@@ -70,6 +70,33 @@
   border-radius: 20px;
 }
 
+.revokeButton{
+  display: flex;
+  padding: 10px; /* Adjust padding as needed */
+  font-size: 16px; /* Adjust font size as needed */
+  font-weight: bold; /* Makes text bold */
+  text-align: center; /* Centers text horizontally */
+  text-decoration: none; /* Removes underline by default */
+  cursor: pointer; /* Changes cursor to pointer on hover */
+  border: none; /* Removes default border */
+  border-radius: 4px; /* Rounded corners */
+  background-color: rgb(255, 90, 90); /* Default button color */
+  color: #fff; /* Text color */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.revokeButton:hover {
+  background-color: rgb(164, 55, 55);
+}
+
+.student-dashboard-text-container{
+  flex-direction: column;
+  display: flex;
+  background-color: #11125f;
+  padding: 20px;
+  border-radius: 20px;
+}
+
 .student-skills-container{
   flex-direction:column;
   display:flex;
@@ -130,7 +157,7 @@ border-color: #0927e8; /* Highlight border color on hover and focus */
   /* Hover and focus effects */
   .submitButton:hover,
   .submitButton:focus {
-    background-color: indigo; /* Darker background color on hover/focus */
+    background-color: rgb(56, 1, 95); /* Darker background color on hover/focus */
   }
 
   .navigationButton {
@@ -187,12 +214,12 @@ border-color: #0927e8; /* Highlight border color on hover and focus */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     text-align: center;
-    background-color: white; /* Dark background color */
+    background-color: rgb(35, 2, 82); /* Dark background color */
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Align content to the top */
     align-items: center;
-    color: black; /* Light text color */
+    color: white; /* Light text color */
     max-width: 600px; /* Maximum width of the popup */
     max-height: 80vh;
     overflow-y: auto;

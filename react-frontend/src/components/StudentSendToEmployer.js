@@ -15,7 +15,7 @@ const { Web3 } = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 const ABI = compiledContract.abi;
 
-
+//A function to send all of the data in the arguments to the employer
 async function addEntryToBlockchain(contractAddress, encryptedStudentData, studentSignature, employerPublicKey, encryptedSymmetricKey) {
     try {
         const accounts = await web3.eth.getAccounts();
@@ -35,6 +35,48 @@ async function addEntryToBlockchain(contractAddress, encryptedStudentData, stude
         console.error('Error adding entry to blockchain:', error);
     }
 }
+
+//Retrieves all contract address in the blockchain
+async function getContractAddresses() {
+    const latestBlockNumber = await web3.eth.getBlockNumber();
+    const contractAddresses = [];
+
+    for (let i = latestBlockNumber; i >= 0; i--) {
+        const block = await web3.eth.getBlock(i, true);
+        if (block && block.transactions) {
+            for (const tx of block.transactions) {
+                if (tx.to === null) {
+                    const transactionReceipt = await web3.eth.getTransactionReceipt(tx.hash);
+                    if (transactionReceipt && transactionReceipt.contractAddress) {
+                        contractAddresses.push(transactionReceipt.contractAddress);
+                    }
+                }
+            }
+        }
+    }
+    return contractAddresses;
+}
+
+// Function to search for a public key in all contracts
+async function searchContractAddress(targetPublicKey) {
+    const contractAddresses = await getContractAddresses();
+    console.log(`Found ${contractAddresses.length} contracts`);
+
+    for (const address of contractAddresses) {
+        try {
+            const contract = new web3.eth.Contract(ABI, address);
+            const publicKey = await contract.methods.getPublicKey().call();
+            if (publicKey === targetPublicKey) {
+                return address; // Return the contract address where the public key was found
+            }
+        } catch (error) {
+            console.error(`Error calling getPublicKey on contract ${address}:`, error);
+        }
+    }
+    console.log('Public key not found in any contract');
+    return null; //If the public is not found, return null
+}
+
 
 function StudentSend() {
     const [studentPrivateSignatureKey, setStudentPrivateSignature] = useState('')
@@ -60,7 +102,7 @@ function StudentSend() {
             const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkillsData);
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
             const signature = await Sign(studentSkillsData, studentPrivateSignatureKey);
-            await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey, encryptedSymmetricKey);
+            await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey, encryptedSymmetricKey); //sends the data to the employer
             setSuccess('Successfully Sent Skills to Employer.')
         } catch (error) {
             setError(error)
