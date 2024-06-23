@@ -11,7 +11,7 @@ function Home() {
 
                 <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly', height:'300px'}}>
                 <Link to="/createuser">
-                    <button class="navigationButton">Create User</button>
+                    <button className="navigationButton">Create User</button>
                 </Link>
                 <Link to="/university/page">
                     <button class="navigationButton">University</button>

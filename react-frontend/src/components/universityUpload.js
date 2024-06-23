@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
-import { HashDataSHA256, Sign } from '../CryptoTools/CryptoTools';
+import { HashDataSHA256, Sign, Encrypt, GenerateSymmetricKey, EncryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 import { FindUser } from '../MongoDB/MongoFunctions';
 import { UploadToIPFS, DownloadFromIPFS } from './pinataService.js';
-import { GenerateSymmetricKey, Encrypt, EncryptWithSymmetricKey } from '../CryptoTools/CryptoTools';
 
 const { Web3 } = require("web3");
 
@@ -64,9 +63,10 @@ function UniversityUpload() {
       const studentPublicKey = studentData.publicKey;
       const studentSignatureKey = studentData.signaturePublicKey;
       const universitySignatureKey = uniData.signaturePublicKey;
-
+  
       const universitySignature = await Sign(studentSkills, universityPrivateSigKey);
       const hashedStudentSkills = await HashDataSHA256(studentSkills)
+
 
       
      
@@ -75,23 +75,25 @@ function UniversityUpload() {
       const encryptedSkills = await EncryptWithSymmetricKey(symmetricKey, studentSkills);
       const encryptedSymmetricKey = await Encrypt(symmetricKey, studentPublicKey);
      
+
       const studentJSON = {
         skillsData: encryptedSkills,
         encryptionKey: encryptedSymmetricKey
       };
+
       // Send Skills to IPFS Pinata
       console.log('Attempting to pin: ' + JSON.stringify(studentJSON));
       const CID = await UploadToIPFS(studentJSON, studentSignatureKey);
 
       await deployContract(studentPublicKey, hashedStudentSkills, studentSignatureKey, universitySignatureKey, universitySignature, CID);
       //window.location.reload();
+
       setError('');
       setSuccess('Successfully Deployed Skills to Blockchain.');
     } catch (error) {
       setSuccess('');
       setError(error.message);
     }
-
   };
 
   return (
