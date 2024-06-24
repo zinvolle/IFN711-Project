@@ -1,8 +1,8 @@
 import React from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from 'react';
-import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
-
+import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, DecryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
+import { UploadToIPFS, DownloadFromIPFS } from './pinataService.js';
 import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
@@ -78,7 +78,9 @@ async function searchContractAddress(targetPublicKey) {
 }
 
 
+
 function StudentSend() {
+    const [studentPrivateKey, setStudentPrivateKey] = useState('')
     const [studentPrivateSignatureKey, setStudentPrivateSignature] = useState('')
     const [studentSkillsData, setStudentSkillsData] = useState('')
     const [contractAddress, setContractAddress] = useState('')
@@ -86,9 +88,28 @@ function StudentSend() {
     const [success, setSuccess] = useState('')
     const [employerUI, setEmployerUI] = useState('')
 
+    
+    async function ViewData(){
+        try {
+            console.log('attempting to view data')
+            let contract = new web3.eth.Contract(ABI, contractAddress);
+            const contractcid = await contract.methods.getCID().call();
+            console.log({contractcid})
+            let download = await DownloadFromIPFS(contractcid)
+            let symmkey = await Decrypt(download.encryptionKey, studentPrivateKey)
+            console.log({symmkey})
+            let decrypt = await DecryptWithSymmetricKey(symmkey, download.skillsData)
+            console.log({decrypt})
+            setStudentSkillsData(decrypt);
+        } catch (error) {
+            console.error(`Error Viewing Data:`, error);
+        }
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            await ViewData();
             const employerData = await FindUser(employerUI);
             setSuccess('')
             setError('')
@@ -125,16 +146,22 @@ function StudentSend() {
                     <label className="h5 w-100">Your Contract Address
                         <input type="text" className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />
                     </label>
+                    <label className="h5 w-100">Your Private Key
+                        <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateKey(e.target.value)} required />
+                    </label>
                     <label className="h5 w-100">Your Private Signature Key
-                        <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
+                        <input type="text" className="form-control" placeholder="Signature Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
                     </label>
-                    <label className="h5 w-50">Your skills data
-                        <textarea type="text" style={{ width: '100%', minHeight: '100px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
-                    </label>
+                    <label className="h5 w-50">Your skills data:</label>
+                        <p>{studentSkillsData}</p>
+
                     <div>
+                        <button className="btn btn-lg btn-dark btn-block m-3" onClick={ViewData}>View</button>
                         <button className="btn btn-lg btn-dark btn-block m-3" type="submit">Send</button>
                     </div>
+                    
                 </form>
+
             </div>
             <UserMsg message={success} />
             <ErrorMsg error={error} />
