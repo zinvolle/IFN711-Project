@@ -101,6 +101,7 @@ function StudentSend() {
             let decrypt = await DecryptWithSymmetricKey(symmkey, download.skillsData)
             console.log({decrypt})
             setStudentSkillsData(decrypt);
+            return decrypt
         } catch (error) {
             console.error(`Error Viewing Data:`, error);
         }
@@ -109,7 +110,7 @@ function StudentSend() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            await ViewData();
+            const studentSkills = await ViewData();
             const employerData = await FindUser(employerUI);
             setSuccess('')
             setError('')
@@ -120,9 +121,9 @@ function StudentSend() {
 
             const employerPublicKey = employerData.publicKey
             const symmetricKey = await GenerateSymmetricKey();
-            const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkillsData);
+            const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkills);
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
-            const signature = await Sign(studentSkillsData, studentPrivateSignatureKey);
+            const signature = await Sign(studentSkills, studentPrivateSignatureKey);
             await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey, encryptedSymmetricKey); //sends the data to the employer
             setSuccess('Successfully Sent Skills to Employer.')
         } catch (error) {
@@ -156,7 +157,7 @@ function StudentSend() {
                         <p>{studentSkillsData}</p>
 
                     <div>
-                        <button className="btn btn-lg btn-dark btn-block m-3" onClick={ViewData}>View</button>
+                        <button className="btn btn-lg btn-dark btn-block m-3" type="button" onClick={ViewData}>View</button>
                         <button className="btn btn-lg btn-dark btn-block m-3" type="submit">Send</button>
                     </div>
                     
