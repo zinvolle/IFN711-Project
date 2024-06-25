@@ -12,54 +12,49 @@ const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 const ABI = compiledContract.abi;
 
 
-//Get every single contract address on the block chain
-async function getContractAddresses() {
+//Find a single contract address on the block chain
+async function findContractAddress(studentPublicKey) {
     const latestBlockNumber = await web3.eth.getBlockNumber();
-    const contractAddresses = [];
-
     for (let i = latestBlockNumber; i >= 0; i--) {
-        const block = await web3.eth.getBlock(i, true);
-        if (block && block.transactions) {
-            block.transactions.forEach(async tx => {
-                if (tx.to === null) {
-                    const transactionReceipt = await web3.eth.getTransactionReceipt(tx.hash);
-                    if (transactionReceipt && transactionReceipt.contractAddress) {
-                        contractAddresses.push(transactionReceipt.contractAddress);
-                    }
-                }
-            });
-        }
-    }
-    return contractAddresses;
-}
+      const block = await web3.eth.getBlock(i, true);
+      if (block && block.transactions) {
+          for (const tx of block.transactions) {
+              if (tx.to === null) {
+                  const transactionReceipt = await web3.eth.getTransactionReceipt(tx.hash);
+                  const contractAddress = transactionReceipt.contractAddress;
+                  const contract = new web3.eth.Contract(ABI, contractAddress);
+                  const contractStudentPublicKey = await contract.methods.getPublicKey().call()
+                  if (contractStudentPublicKey == studentPublicKey){
+                    return contractAddress
+                  }
+              }
+          }
+      }
+  }
+    return null
+  }
 
 //Main function that gets all student data for a specific employer key
-async function getAllStudentDataForStudent(_studentPublicKey) {
+async function getAllSendTosForStudent(contractAddress) {
     try {
-        const contractAddresses = await getContractAddresses() //get every single contract address on the block chain
-        for (const address of contractAddresses) { //iterate through every address
-            const contract = new web3.eth.Contract(ABI, address);
-            const studentPublicKey = await contract.methods.getPublicKey().call()
-            if (studentPublicKey == _studentPublicKey) {
-                const studentSendTos = await contract.methods.getEntries().call()
-                const parsedStudentSendTos = studentSendTos.map(obj => JSON.parse(obj))
-                return parsedStudentSendTos
-            }
+            const contract = new web3.eth.Contract(ABI, contractAddress);
+            const studentSendTos = await contract.methods.getEntries().call()
+            const parsedStudentSendTos = studentSendTos.map(obj => JSON.parse(obj))
+            return parsedStudentSendTos
         }
-        return []
-    } catch (error) {
+        
+     catch (error) {
         console.log(error)
     }
 }
 
-function ContractSentTo({employer}) {
+function ContractSentTo({employer, onRevoke}) {
     return (
         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:'10px'}}>
             <p style={{fontSize:'20px', marginTop:'10px'}}>{employer}</p>
-            <button className='revokeButton' style={{}} >Revoke</button>
+            <button className='revokeButton' onClick={onRevoke} >Revoke</button>
         </div>
     )
-
 }
 
 const Popup = ({ isVisible, keyData, onClose }) => {
@@ -79,6 +74,7 @@ function StudentView() {
     const studentPublicKey = location.state.studentPublicKey;
     const studentSignatureKey = location.state.studentSignaturePublicKey;
     const studentID = location.state.studentID;
+    const [contractAddress, setContractAddress] = useState('')
     const [employerIDs, setEmployerIDs] = useState([]);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [keyData, setKeyData] = useState('');
@@ -86,7 +82,9 @@ function StudentView() {
     useEffect(() => {
         const fetchStudentData = async () => {
             try {
-                const studentSendTos = await getAllStudentDataForStudent(studentPublicKey);
+                const contractAddress = await findContractAddress(studentPublicKey);
+                const studentSendTos = await getAllSendTosForStudent(contractAddress);
+                setContractAddress(contractAddress);
                 const employers = [];
 
                 if (studentSendTos && studentSendTos.length > 0) {
@@ -117,6 +115,21 @@ function StudentView() {
         setIsPopupVisible(false);
     };
 
+    const handleRevoke = async (employerID) => {
+        try {
+            console.log(`Revoking for employer: ${employerID}`);
+            const contract = new web3.eth.Contract(ABI, contractAddress);
+            const accounts = await web3.eth.getAccounts();
+            const mainAccount = accounts[0];
+            const employerData = await FindUser(employerID);
+            const employerPublicKey = employerData.publicKey;
+            await contract.methods.deleteEntry(employerPublicKey).send({from: mainAccount, gas: 4700000 });
+            window.location.reload();            
+        } catch (error) {
+            console.error('Error revoking contract:', error);
+        }
+    };
+
     return (
         <div className='dashboard-container'>
             <div className='student-dashboard-text-container' style={{ marginTop: '40px' }}>
@@ -127,7 +140,7 @@ function StudentView() {
             <div className='student-dashboard-text-container' style={{ marginTop: '40px' }}>
                 <h1>Your skills were sent to:</h1>
                 {employerIDs.length > 0 ? (
-                    employerIDs.map((employer, index) => <ContractSentTo key={index} employer={employer} />)
+                    employerIDs.map((employer, index) => <ContractSentTo key={index} employer={employer} onRevoke={() => handleRevoke(employer)} />)
                 ) : (
                     <p>No employer data found</p>
                 )}

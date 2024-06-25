@@ -16,9 +16,13 @@ function UniversityPage() {
                 <Link to="/university/deploy">
                     <button class="navigationButton">Deploy Contract</button>
                 </Link>
+                <Link to="/university/update">
+                    <button class="navigationButton" style={{fontSize:'26px'}}>Update Contract</button>
+                </Link>
                 <Link to="/contract/information">
                     <button class="navigationButton" style={{fontSize:'26px'}}>Contract Information</button>
                 </Link>
+                
                 </div>
             </div>
         </div>

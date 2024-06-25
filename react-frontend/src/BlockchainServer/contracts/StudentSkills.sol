@@ -58,6 +58,7 @@ contract StudentSkills{
         }
         return dataList;
     }
+
     function getPublicKey() public view returns (string memory){
         return publicKey;
     }
@@ -80,5 +81,12 @@ contract StudentSkills{
 
     function getCID() public view returns (string memory){
         return CID;
+    }
+
+    function updateContract(string memory newCID, string memory newUniversitySignaturePublicKey, string memory newUniversitySignature, string memory newHashedData) public  {
+        CID = newCID;
+        universitySignaturePublicKey = newUniversitySignaturePublicKey;
+        universitySignature = newUniversitySignature;
+        hashedData = newHashedData;
     }
 }

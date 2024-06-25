@@ -14,7 +14,26 @@ const ABI = compiledContract.abi;
 const bytecode = compiledContract.bytecode
 const contract = new web3.eth.Contract(ABI);
 
-
+async function checkStudentHasContract(studentPublicKey) {
+  const latestBlockNumber = await web3.eth.getBlockNumber();
+  for (let i = latestBlockNumber; i >= 0; i--) {
+    const block = await web3.eth.getBlock(i, true);
+    if (block && block.transactions) {
+        for (const tx of block.transactions) {
+            if (tx.to === null) {
+                const transactionReceipt = await web3.eth.getTransactionReceipt(tx.hash);
+                const contractAddress = transactionReceipt.contractAddress;
+                const contract = new web3.eth.Contract(ABI, contractAddress);
+                const contractStudentPublicKey = await contract.methods.getPublicKey().call()
+                if (contractStudentPublicKey == studentPublicKey){
+                  return true
+                }
+            }
+        }
+    }
+}
+  return false
+}
 
 
 //deployment of Contract function
@@ -38,11 +57,9 @@ async function deployContract(_studentPublicKey, _hashedStudentSkills, _studentS
 
 
 function UniversityUpload() {
-  const [studentPublicKey, setStudentPublicKey] = useState('')
   const [studentSkills, setStudentSkills] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [studentSignaturePublicKey, setStudentSignaturePublicKey] = useState('')
   const [studentIdentifer, setStudentIdentifier] = useState('');
   const [universityIdentifier, setUniversityIdentifier] = useState('');
   const [universityPrivateSigKey, setUniversityPrivateSigKey] = useState('');
@@ -60,7 +77,14 @@ function UniversityUpload() {
         setError('No data found for the University Identifier');
         return
       }
+
+      
       const studentPublicKey = studentData.publicKey;
+      const studentHasContract = await checkStudentHasContract(studentPublicKey)
+      if (studentHasContract) {
+          setError('Error deploying. This student already has a contract')
+          return
+      }
       const studentSignatureKey = studentData.signaturePublicKey;
       const universitySignatureKey = uniData.signaturePublicKey;
   
@@ -83,7 +107,7 @@ function UniversityUpload() {
 
       // Send Skills to IPFS Pinata
       console.log('Attempting to pin: ' + JSON.stringify(studentJSON));
-      const CID = await UploadToIPFS(studentJSON, studentSignatureKey);
+      const CID = await UploadToIPFS(studentJSON, studentPublicKey);
 
       await deployContract(studentPublicKey, hashedStudentSkills, studentSignatureKey, universitySignatureKey, universitySignature, CID);
       //window.location.reload();

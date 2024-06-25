@@ -18,6 +18,7 @@ import StudentPage from './components/StudentPage';
 import EmployerPage from './components/EmployerPage';
 import UniversityPage from './components/UniversityPage';
 import StudentView from './components/StudentView';
+import UniversityUpdate from './components/UniversityUpdate';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
           <Route path='/employer/page' element = {<EmployerPage/>}/>
           <Route path='/university/page' element = {<UniversityPage/>}/>
           <Route path= '/student/view' element = {<StudentView />} />
+          <Route path= '/university/update' element = {<UniversityUpdate />} />
       </Routes>
     </BrowserRouter>
   );

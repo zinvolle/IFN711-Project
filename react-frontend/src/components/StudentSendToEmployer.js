@@ -36,6 +36,19 @@ async function addEntryToBlockchain(contractAddress, encryptedStudentData, stude
     }
 }
 
+//Checks whether this student has already sent a contract to this employer.
+async function checkHasAlreadySent(contractAddress ,employerPublicKey){ 
+    const contract = new web3.eth.Contract(ABI, contractAddress);
+    const entries = await contract.methods.getEntries().call()
+    const parsedEntries = entries.map(obj => JSON.parse(obj))
+    for (let entry of parsedEntries) {
+        if (entry.employerPublicKey == employerPublicKey){
+            return true
+        }
+    }
+    return false
+}  
+
 //Retrieves all contract address in the blockchain
 async function getContractAddresses() {
     const latestBlockNumber = await web3.eth.getBlockNumber();
@@ -58,15 +71,14 @@ async function getContractAddresses() {
 }
 
 // Function to search for a public key in all contracts
-async function searchContractAddress(targetPublicKey) {
+async function searchContractAddress(studentPublicKey) {
     const contractAddresses = await getContractAddresses();
-    console.log(`Found ${contractAddresses.length} contracts`);
 
     for (const address of contractAddresses) {
         try {
             const contract = new web3.eth.Contract(ABI, address);
             const publicKey = await contract.methods.getPublicKey().call();
-            if (publicKey === targetPublicKey) {
+            if (publicKey === studentPublicKey) {
                 return address; // Return the contract address where the public key was found
             }
         } catch (error) {
@@ -117,8 +129,12 @@ function StudentSend() {
                 setError('No such employer exists')
                 return
             }
-
             const employerPublicKey = employerData.publicKey
+            const hasAlreadyBeenSent = await checkHasAlreadySent(contractAddress, employerPublicKey);
+            if (hasAlreadyBeenSent) {
+                setError('Contract has already been sent to this employer')
+                return
+            }
             const symmetricKey = await GenerateSymmetricKey();
             const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkillsData);
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
