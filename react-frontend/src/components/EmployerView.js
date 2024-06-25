@@ -144,7 +144,9 @@ function EmployerView() {
                 // Decrypt all student data
                 const decryptedDataPromises = studentData.map(async (data) => {
                     const symmetricKey = await Decrypt(data.encryptedSymmetricKey, employerPrivateKey);
+                    console.log({symmetricKey})
                     const decrypted = await DecryptWithSymmetricKey(symmetricKey, data.encryptedData);
+                    console.log({decrypted})
                     return { ...data, decryptedData: decrypted };
                 });
 
