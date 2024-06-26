@@ -37,10 +37,10 @@ function EmployerLogin() {
         <div className='app-container'>
             <Navigation>
                 <li class="breadcrumb-item"><a className = "link-light" href="/employer/page">Employer</a></li>
-                <li class="breadcrumb-item" aria-current="page">Skills Data</li>
+                <li class="breadcrumb-item" aria-current="page">Login</li>
             </Navigation>
             <div className='create-user-container'>
-                <h1 className='mt-4'>Student Skills Data</h1>
+                <h1 className='mt-4'>Employer Login</h1>
                 <hr className="horizontal-line" />
 
                     <form onSubmit={handleSubmit} style={{display:'flex', flexDirection:'column'}}>

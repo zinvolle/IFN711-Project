@@ -13,17 +13,11 @@ function UniversityPage() {
                 <h1 style={{fontSize:'60px'}}> University Page</h1>
 
                 <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly', height:'350px'}}>
-                <Link to="/viewblocks">
-                    <button class="navigationButton">View Contracts</button>
-                </Link>
                 <Link to="/university/deploy">
                     <button class="navigationButton">Deploy Contract</button>
                 </Link>
                 <Link to="/university/update">
                     <button class="navigationButton" style={{fontSize:'26px'}}>Update Contract</button>
-                </Link>
-                <Link to="/contract/information">
-                    <button class="navigationButton" style={{fontSize:'26px'}}>Contract Information</button>
                 </Link>
                 
                 </div>

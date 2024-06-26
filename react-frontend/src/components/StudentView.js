@@ -3,6 +3,7 @@ import '../styles/styles.css';
 import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions.js';
+import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 const { Web3 } = require("web3");
 
 
@@ -132,7 +133,12 @@ function StudentView() {
 
     return (
         <div className='dashboard-container'>
-            <div className='student-dashboard-text-container' style={{ marginTop: '40px' }}>
+            <Navigation>
+                <li class="breadcrumb-item"><a className = "link-light" href="/student/page">Student</a></li>
+                <li class="breadcrumb-item" aria-current="page"><a className = "link-light" href="/student/receive">Login</a></li>
+                <li class="breadcrumb-item" aria-current="page">View</li>
+            </Navigation>
+            <div className='student-dashboard-text-container' style={{ marginTop: '60px' }}>
                 <p style={{ fontSize: '32px' }}>Student: {studentID}</p>
                 <button className='submitButton' onClick={() => handleButtonClick(studentPublicKey, 'Public Key')}>View Public Key</button>
                 <button className='submitButton' style={{ marginTop: '10px' }} onClick={() => handleButtonClick(studentSignatureKey, 'Signature Public Key')}>View Signature Public Key</button>

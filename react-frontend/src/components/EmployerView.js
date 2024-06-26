@@ -188,7 +188,12 @@ function EmployerView() {
 
     return (
         <div className='dashboard-container'>
-            <h1 style={{ marginTop: '30px', fontSize: '60px' }}>Employer Dashboard</h1>
+            <Navigation>
+                <li class="breadcrumb-item"><a className = "link-light" href="/employer/page">Employer</a></li>
+                <li class="breadcrumb-item"><a className = "link-light" href="/employer/login">Login</a></li>
+                <li class="breadcrumb-item">View</li>
+            </Navigation>
+            <h1 style={{ marginTop: '50px', fontSize: '50px' }}>Employer Dashboard</h1>
             <div className='dashboard-text-container' style={{ marginTop: '40px' }}>
                 <p style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '10px' }}>Employer Unique Identifier:</p>
                 <p style={{ fontSize: '20px', marginLeft: '40px', marginTop: '10px' }}> {employerData.EUI}</p>

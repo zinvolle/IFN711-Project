@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { GenerateRSAKeyPairs, GenerateSignatureKeyPairs } from "../CryptoTools/CryptoTools"
 import { CreateUser } from "../MongoDB/MongoFunctions"
+import { Container, ErrorMsg, Navigation } from './containers.js';
 import '../styles/styles.css'
 
 
@@ -60,6 +61,9 @@ function UserCreation() {
 
     return (
         <div className='app-container'>
+            <Navigation>
+                <li class="breadcrumb-item" aria-current="page">Register</li>
+            </Navigation>
             <div className='create-user-container' >
                 <h2 style={{ fontWeight: 'bold', fontSize: '48px', marginBottom: '20px' }}>Create User</h2>
                 <form onSubmit={handleSubmit}>
