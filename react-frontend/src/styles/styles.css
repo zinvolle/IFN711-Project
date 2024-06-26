@@ -261,3 +261,7 @@ border-color: #0927e8; /* Highlight border color on hover and focus */
   border-top: 1px solid #ccc; /* Change the color and thickness as needed */
   margin: 20px 0; /* Adjust the spacing as needed */
 }
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: ">" !important;
+}

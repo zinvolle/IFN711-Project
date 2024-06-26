@@ -14,7 +14,7 @@ function StudentPage() {
 
             <div style={{display:'flex', flexDirection:'column', justifyContent:'space-evenly', height:'400px'}}>
             <Link to="/viewblocks">
-                <button class="navigationButton">View Blocks</button>
+                <button class="navigationButton">View Contracts</button>
             </Link>
             <Link to="/student/send">
                 <button class="navigationButton">Send To Employer</button>

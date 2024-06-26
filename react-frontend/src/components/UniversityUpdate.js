@@ -107,6 +107,10 @@ function UniversityUpdate() {
 
     return (
         <div className='app-container'>
+          <Navigation>
+            <li class="breadcrumb-item"><a className = "link-light" href="/university/page">University</a></li>
+            <li class="breadcrumb-item" aria-current="page">Update</li>
+          </Navigation>
           <div className="view-container"> 
               <form onSubmit={handleSubmit}>
                 <h1 className="h3 mb-3 font-weight-normal">Update Student Skills in the Blockchain</h1>

@@ -67,7 +67,7 @@ function ViewBlocks(){
 
         <div className="app-container">
             <Navigation>
-                <li class="breadcrumb-item" aria-current="page">View Blocks</li>
+                <li class="breadcrumb-item" aria-current="page">View Contracts</li>
             </Navigation>
             <div className="view-container">
             

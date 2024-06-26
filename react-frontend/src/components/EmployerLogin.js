@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions.js';
+import { Container, ErrorMsg, Navigation } from './containers.js';
 import { useNavigate } from 'react-router-dom';
 import '../styles/styles.css'
 
@@ -34,9 +35,13 @@ function EmployerLogin() {
     return (
 
         <div className='app-container'>
+            <Navigation>
+                <li class="breadcrumb-item"><a className = "link-light" href="/employer/page">Employer</a></li>
+                <li class="breadcrumb-item" aria-current="page">Skills Data</li>
+            </Navigation>
             <div className='create-user-container'>
-                <h1 className='mt-4'>Students Skills Data</h1>
-    
+                <h1 className='mt-4'>Student Skills Data</h1>
+                <hr className="horizontal-line" />
 
                     <form onSubmit={handleSubmit} style={{display:'flex', flexDirection:'column'}}>
                         <label >Employer Unique Identifier </label>
