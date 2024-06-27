@@ -49,45 +49,27 @@ async function checkHasAlreadySent(contractAddress ,employerPublicKey){
     return false
 }  
 
-//Retrieves all contract address in the blockchain
-async function getContractAddresses() {
+
+async function findContractAddress(studentPublicKey) {
     const latestBlockNumber = await web3.eth.getBlockNumber();
-    const contractAddresses = [];
-
     for (let i = latestBlockNumber; i >= 0; i--) {
-        const block = await web3.eth.getBlock(i, true);
-        if (block && block.transactions) {
-            for (const tx of block.transactions) {
-                if (tx.to === null) {
-                    const transactionReceipt = await web3.eth.getTransactionReceipt(tx.hash);
-                    if (transactionReceipt && transactionReceipt.contractAddress) {
-                        contractAddresses.push(transactionReceipt.contractAddress);
-                    }
-                }
-            }
-        }
-    }
-    return contractAddresses;
-}
-
-// Function to search for a public key in all contracts
-async function searchContractAddress(studentPublicKey) {
-    const contractAddresses = await getContractAddresses();
-
-    for (const address of contractAddresses) {
-        try {
-            const contract = new web3.eth.Contract(ABI, address);
-            const publicKey = await contract.methods.getPublicKey().call();
-            if (publicKey === studentPublicKey) {
-                return address; // Return the contract address where the public key was found
-            }
-        } catch (error) {
-            console.error(`Error calling getPublicKey on contract ${address}:`, error);
-        }
-    }
-    console.log('Public key not found in any contract');
-    return null; //If the public is not found, return null
-}
+      const block = await web3.eth.getBlock(i, true);
+      if (block && block.transactions) {
+          for (const tx of block.transactions) {
+              if (tx.to === null) {
+                  const transactionReceipt = await web3.eth.getTransactionReceipt(tx.hash);
+                  const contractAddress = transactionReceipt.contractAddress;
+                  const contract = new web3.eth.Contract(ABI, contractAddress);
+                  const contractStudentPublicKey = await contract.methods.getPublicKey().call()
+                  if (contractStudentPublicKey == studentPublicKey){
+                    return contractAddress
+                  }
+              }
+          }
+      }
+  }
+    return false
+  }
 
 
 
@@ -95,7 +77,7 @@ function StudentSend() {
     const [studentPrivateKey, setStudentPrivateKey] = useState('')
     const [studentPrivateSignatureKey, setStudentPrivateSignature] = useState('')
     const [studentSkillsData, setStudentSkillsData] = useState('')
-    const [contractAddress, setContractAddress] = useState('')
+    const [studentID, setStudentID] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const [employerUI, setEmployerUI] = useState('')
@@ -104,6 +86,9 @@ function StudentSend() {
     async function ViewData(){
         try {
             console.log('attempting to view data')
+            const studentData = await FindUser(studentID);
+            const studentPublicKey = studentData.publicKey;
+            const contractAddress = await findContractAddress(studentPublicKey)
             let contract = new web3.eth.Contract(ABI, contractAddress);
             const contractcid = await contract.methods.getCID().call();
             console.log({contractcid})
@@ -130,12 +115,16 @@ function StudentSend() {
                 setError('No such employer exists')
                 return
             }
+            const studentData = await FindUser(studentID);
+            const studentPublicKey = studentData.publicKey;
+            const contractAddress = await findContractAddress(studentPublicKey)
             const employerPublicKey = employerData.publicKey
             const hasAlreadyBeenSent = await checkHasAlreadySent(contractAddress, employerPublicKey);
             if (hasAlreadyBeenSent) {
                 setError('Contract has already been sent to this employer')
                 return
             }
+            
             const symmetricKey = await GenerateSymmetricKey();
             const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkills);
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
@@ -160,8 +149,8 @@ function StudentSend() {
                     <label className="h5 w-100">Send To
                         <input type="text" className="form-control" placeholder="Employer Unique Identifer" onChange={(e) => setEmployerUI(e.target.value)} required autoFocus />
                     </label>
-                    <label className="h5 w-100">Your Contract Address
-                        <input type="text" className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />
+                    <label className="h5 w-100">Your Student Unique Identifier
+                        <input type="text" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentID(e.target.value)} required />
                     </label>
                     <label className="h5 w-100">Your Private Key
                         <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateKey(e.target.value)} required />
