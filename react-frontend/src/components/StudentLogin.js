@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { Container, ErrorMsg, Navigation } from './containers.js';
 import { FindUser } from '../MongoDB/MongoFunctions.js';
+import { useNavigate } from 'react-router-dom';
+
 
 const { Web3 } = require("web3");
 
@@ -83,19 +85,22 @@ function StudentRecieve() {
     const [studentID, setStudentID] = useState('')
     const [error, setError] = useState('')
     const [studentInfo, setStudentInfo] = useState('')
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const studentData = await FindUser(studentID);
-            if (!studentData) {
+            if (!studentData || studentData.type != 'student') {
                 setError('student not found');
                 return
             }
             const studentPublicKey = studentData.publicKey
-            console.log(studentPublicKey)
-            const data = await getAllStudentDataForStudent(studentPublicKey)
-            setStudentInfo(data)
+            const studentSignaturePublicKey = studentData.signaturePublicKey
+            const data = {studentPublicKey, studentID, studentSignaturePublicKey};
+            
+            navigate('/student/view', { state: data })
+
         } catch (error) {
             setError(error)
         }
@@ -106,24 +111,20 @@ function StudentRecieve() {
         <div className='app-container'>
             <Navigation>
                 <li class="breadcrumb-item"><a className = "link-light" href="/student/page">Student</a></li>
-                <li class="breadcrumb-item" aria-current="page">Skills Data</li>
+                <li class="breadcrumb-item" aria-current="page">Login</li>
             </Navigation>
             <div>
-  
-                   
-                    <form className='create-user-container' onSubmit={handleSubmit}>
-                    <h1 >Students Skills Data</h1>
-                    <hr className="horizontal-line" />
-                        <label style={{fontSize:'28px'}}>Student ID
-                            
-                            <input type="text" className="form-control" placeholder="Student Unique Identifer"  style= {{marginTop:'10px'}} onChange={(e) => setStudentID(e.target.value)} required autoFocus />
-                        </label>
-                        <button className="submitButton" style= {{marginTop:'40px', width:'150px', alignSelf:'center'}} type="submit">Submit</button>
-                    </form>
-        
+                <form className='create-user-container' onSubmit={handleSubmit}>
+                <h1 >Student Login</h1>
+                <hr className="horizontal-line" />
+                    <label style={{fontSize:'28px'}}>Student ID
+                        <input type="text" className="form-control" placeholder="Student Unique Identifer"  style= {{marginTop:'10px'}} onChange={(e) => setStudentID(e.target.value)} required autoFocus />
+                    </label>
+                    <p className='errorMessage'>{error}</p>
+                    <button className="submitButton" style= {{marginTop:'40px', width:'150px', alignSelf:'center'}} type="submit">Submit</button>
+                </form>  
             </div>
         </div>
-
     )
 }
 

@@ -22,6 +22,7 @@ function ContractInformation() {
     const [uniSignature, setUniSignature] = useState('')
     const [inputData, setInputData] = useState('')
     const [authentic, setAuthentic] = useState(false)
+    const [CID, setCID] = useState('')
 
 
     const handleClick = async () => {
@@ -80,6 +81,16 @@ function ContractInformation() {
             console.log(error)
         });
 
+        contract.methods.getCID().call()
+        .then(cid => {
+            setCID(cid)
+        })
+        .catch(error => {
+            setError(error)
+            console.log(error)
+        });
+
+
         // testing of hashing function, to be deleted later...
         // ( Currently works but only from second click due to not awaiting resolve on retrieval of publicKey above.
         //   This is irrelevant as AuthenticateData is only on this page for debugging the function itself. )
@@ -115,6 +126,8 @@ function ContractInformation() {
                     <p>{uniSignaturePublicKey}</p>
                     <h3>University Signature</h3>
                     <p>{uniSignature}</p>
+                    <h3>CID</h3>
+                    <p>{CID}</p>
                     {/*testing hashing below*/}
                     <h3>Authenticity Check</h3>
                         <p>Hashed Data: {authentic.toString()}</p>

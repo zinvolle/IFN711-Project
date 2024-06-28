@@ -1,8 +1,8 @@
 import React from 'react';
 import compiledContract from "../BlockchainServer/build/contracts/StudentSkills.json";
 import { useState, useEffect } from 'react';
-import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
-
+import { Encrypt, Decrypt, Sign, Verify, EncryptWithSymmetricKey, DecryptWithSymmetricKey, GenerateSymmetricKey } from '../CryptoTools/CryptoTools';
+import { UploadToIPFS, DownloadFromIPFS } from './pinataService.js';
 import {Container, ErrorMsg, Navigation, UserMsg} from './containers.js';
 
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions';
@@ -15,7 +15,7 @@ const { Web3 } = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 const ABI = compiledContract.abi;
 
-
+//A function to send all of the data in the arguments to the employer
 async function addEntryToBlockchain(contractAddress, encryptedStudentData, studentSignature, employerPublicKey, encryptedSymmetricKey) {
     try {
         const accounts = await web3.eth.getAccounts();
@@ -36,17 +36,78 @@ async function addEntryToBlockchain(contractAddress, encryptedStudentData, stude
     }
 }
 
+//Checks whether this student has already sent a contract to this employer.
+async function checkHasAlreadySent(contractAddress ,employerPublicKey){ 
+    const contract = new web3.eth.Contract(ABI, contractAddress);
+    const entries = await contract.methods.getEntries().call()
+    const parsedEntries = entries.map(obj => JSON.parse(obj))
+    for (let entry of parsedEntries) {
+        if (entry.employerPublicKey == employerPublicKey){
+            return true
+        }
+    }
+    return false
+}  
+
+
+async function findContractAddress(studentPublicKey) {
+    const latestBlockNumber = await web3.eth.getBlockNumber();
+    for (let i = latestBlockNumber; i >= 0; i--) {
+      const block = await web3.eth.getBlock(i, true);
+      if (block && block.transactions) {
+          for (const tx of block.transactions) {
+              if (tx.to === null) {
+                  const transactionReceipt = await web3.eth.getTransactionReceipt(tx.hash);
+                  const contractAddress = transactionReceipt.contractAddress;
+                  const contract = new web3.eth.Contract(ABI, contractAddress);
+                  const contractStudentPublicKey = await contract.methods.getPublicKey().call()
+                  if (contractStudentPublicKey == studentPublicKey){
+                    return contractAddress
+                  }
+              }
+          }
+      }
+  }
+    return false
+  }
+
+
+
 function StudentSend() {
+    const [studentPrivateKey, setStudentPrivateKey] = useState('')
     const [studentPrivateSignatureKey, setStudentPrivateSignature] = useState('')
     const [studentSkillsData, setStudentSkillsData] = useState('')
-    const [contractAddress, setContractAddress] = useState('')
+    const [studentID, setStudentID] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const [employerUI, setEmployerUI] = useState('')
 
+    
+    async function ViewData(){
+        try {
+            console.log('attempting to view data')
+            const studentData = await FindUser(studentID);
+            const studentPublicKey = studentData.publicKey;
+            const contractAddress = await findContractAddress(studentPublicKey)
+            let contract = new web3.eth.Contract(ABI, contractAddress);
+            const contractcid = await contract.methods.getCID().call();
+            console.log({contractcid})
+            let download = await DownloadFromIPFS(contractcid)
+            let symmkey = await Decrypt(download.encryptionKey, studentPrivateKey)
+            console.log({symmkey})
+            let decrypt = await DecryptWithSymmetricKey(symmkey, download.skillsData)
+            console.log({decrypt})
+            setStudentSkillsData(decrypt);
+            return decrypt
+        } catch (error) {
+            console.error(`Error Viewing Data:`, error);
+        }
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
+            const studentSkills = await ViewData();
             const employerData = await FindUser(employerUI);
             setSuccess('')
             setError('')
@@ -54,13 +115,21 @@ function StudentSend() {
                 setError('No such employer exists')
                 return
             }
-
+            const studentData = await FindUser(studentID);
+            const studentPublicKey = studentData.publicKey;
+            const contractAddress = await findContractAddress(studentPublicKey)
             const employerPublicKey = employerData.publicKey
+            const hasAlreadyBeenSent = await checkHasAlreadySent(contractAddress, employerPublicKey);
+            if (hasAlreadyBeenSent) {
+                setError('Contract has already been sent to this employer')
+                return
+            }
+            
             const symmetricKey = await GenerateSymmetricKey();
-            const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkillsData);
+            const encryptedData = await EncryptWithSymmetricKey(symmetricKey, studentSkills);
             const encryptedSymmetricKey = await Encrypt(symmetricKey, employerPublicKey);
-            const signature = await Sign(studentSkillsData, studentPrivateSignatureKey);
-            await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey, encryptedSymmetricKey);
+            const signature = await Sign(studentSkills, studentPrivateSignatureKey);
+            await addEntryToBlockchain(contractAddress, encryptedData, signature, employerPublicKey, encryptedSymmetricKey); //sends the data to the employer
             setSuccess('Successfully Sent Skills to Employer.')
         } catch (error) {
             setError(error)
@@ -80,19 +149,25 @@ function StudentSend() {
                     <label className="h5 w-100">Send To
                         <input type="text" className="form-control" placeholder="Employer Unique Identifer" onChange={(e) => setEmployerUI(e.target.value)} required autoFocus />
                     </label>
-                    <label className="h5 w-100">Your Contract Address
-                        <input type="text" className="form-control" placeholder="Contract Address" onChange={(e) => setContractAddress(e.target.value)} required />
+                    <label className="h5 w-100">Your Student Unique Identifier
+                        <input type="text" className="form-control" placeholder="Student Unique Identifier" onChange={(e) => setStudentID(e.target.value)} required />
+                    </label>
+                    <label className="h5 w-100">Your Private Key
+                        <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateKey(e.target.value)} required />
                     </label>
                     <label className="h5 w-100">Your Private Signature Key
-                        <input type="text" className="form-control" placeholder="Private Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
+                        <input type="text" className="form-control" placeholder="Signature Key" onChange={(e) => setStudentPrivateSignature(e.target.value)} required />
                     </label>
-                    <label className="h5 w-50">Your skills data
-                        <textarea type="text" style={{ width: '100%', minHeight: '100px' }} className="form-control" onChange={(e) => setStudentSkillsData(e.target.value)} placeholder="Your Skills Data" required />
-                    </label>
+                    <label className="h5 w-50">Your skills data:</label>
+                        <p>{studentSkillsData}</p>
+
                     <div>
+                        <button className="btn btn-lg btn-dark btn-block m-3" type="button" onClick={ViewData}>View</button>
                         <button className="btn btn-lg btn-dark btn-block m-3" type="submit">Send</button>
                     </div>
+                    
                 </form>
+
             </div>
             <UserMsg message={success} />
             <ErrorMsg error={error} />

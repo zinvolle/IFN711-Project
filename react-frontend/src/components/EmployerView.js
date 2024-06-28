@@ -6,8 +6,8 @@ import AuthenticateData from './hashing.js'
 import { Container, ErrorMsg, Navigation } from './containers.js';
 import { FindUser, FindUserByPublicKey } from '../MongoDB/MongoFunctions.js';
 import { useLocation } from 'react-router-dom';
-//import UisCheckCircle from '@iconscout/react-unicons/icons/uil-check-circle.js';
-//import  UisExclamationCircle from '@iconscout/react-unicons/icons/uil-exclamation-circle.js'
+import UisCheckCircle from '@iconscout/react-unicons/icons/uil-check-circle.js';
+import UisExclamationCircle from '@iconscout/react-unicons/icons/uil-exclamation-circle.js'
 import '../styles/styles.css'
 
 const { Web3 } = require("web3");
@@ -103,13 +103,17 @@ function Student({ studentData }) {
                     style={{ position: 'relative', display: 'inline-block' }}
                 >
                     {studentData.isVerified ? (
-                        //<UisCheckCircle size='30' color='green' />
-                        <i className='bi bi-check-circle text-success'/>
+                        <div>
+                            <UisCheckCircle size='30' color='green' />
+                            <i className='bi bi-check-circle text-success' />
+                        </div>
                     ) : (
-                        //<UisExclamationCircle size='30' color='red' />
-                        <i className='bi bi-exclamation-circle text-danger'/>
+                        <div>
+                            <UisExclamationCircle size='30' color='red' />
+                            <i className='bi bi-exclamation-circle text-danger' />
+                        </div>
                     )}
-                     {showTooltip && (
+                    {showTooltip && (
                         <div className="tooltip-container">
                             <span>{studentData.isVerified && studentData.hashCompareResult ? 'Valid' : 'Invalid'}</span>
                         </div>
@@ -140,7 +144,9 @@ function EmployerView() {
                 // Decrypt all student data
                 const decryptedDataPromises = studentData.map(async (data) => {
                     const symmetricKey = await Decrypt(data.encryptedSymmetricKey, employerPrivateKey);
+                    console.log({symmetricKey})
                     const decrypted = await DecryptWithSymmetricKey(symmetricKey, data.encryptedData);
+                    console.log({decrypted})
                     return { ...data, decryptedData: decrypted };
                 });
 
@@ -181,8 +187,13 @@ function EmployerView() {
     }
 
     return (
-        <Container>
-            <h1 style={{ marginTop: '30px', fontSize: '60px' }}>Employer Dashboard</h1>
+        <div className='dashboard-container'>
+            <Navigation>
+                <li class="breadcrumb-item"><a className = "link-light" href="/employer/page">Employer</a></li>
+                <li class="breadcrumb-item"><a className = "link-light" href="/employer/login">Login</a></li>
+                <li class="breadcrumb-item">View</li>
+            </Navigation>
+            <h1 style={{ marginTop: '50px', fontSize: '50px' }}>Employer Dashboard</h1>
             <div className='dashboard-text-container' style={{ marginTop: '40px' }}>
                 <p style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '10px' }}>Employer Unique Identifier:</p>
                 <p style={{ fontSize: '20px', marginLeft: '40px', marginTop: '10px' }}> {employerData.EUI}</p>
@@ -193,7 +204,7 @@ function EmployerView() {
                     <Student key={index} studentData={student} />
                 ))}
             </div>
-        </Container>
+        </div>
     );
 };
 
