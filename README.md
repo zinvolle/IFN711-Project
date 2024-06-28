@@ -18,4 +18,4 @@ To get the app working you'll need to do:\
 To seed the mongod server with test data do:\
     Run database by launching 'mongod.exe'\
     Run node.js in backend dir (only required once)\
-    If you see "Seeding Successful" it means you're good!\
+    If you see "Seeding Successful" it means you're good!
