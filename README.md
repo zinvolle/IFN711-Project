@@ -2,7 +2,11 @@ Install systems;
     Ganache: https://archive.trufflesuite.com/ganache/
     MongoDB: https://www.mongodb.com/try/download/community
 
+Sign up for service:
+    Pinata (https://www.pinata.cloud/)
+
 To get the app working you'll need to do:
+    Create a .env file in the react-frontend dir and enter the Pinata JWT under 'REACT_APP_JWT' and the gateway URL under 'REACT_APP_GATEWAY_URL'.
     Download all dependencies in react-frontend dir using 'npm i'
     Download all dependencies in express-backend dir using 'npm i'
     Start the react server in frontend dir using 'npm start'
